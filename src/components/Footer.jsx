@@ -45,8 +45,8 @@ export default function Footer() {
 
           <div className="mt-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 text-white/60">
             <span className="text-lg font-semibold">University Partners</span>
-            <span className="text-lg font-semibold">Scholarship Offices</span>
-            <span className="text-lg font-semibold">Embassy Guidance</span>
+            <span className="text-lg font-semibold">Academic Loan</span>
+            <span className="text-lg font-semibold">Visa Guidance</span>
             <span className="text-lg font-semibold">Global Network</span>
             <span className="text-lg font-semibold">Student Community</span>
           </div>
@@ -78,7 +78,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link to="/partners" className="hover:text-white transition">
-                  Partner Schools
+                  Partner Universities
                 </Link>
               </li>
               <li>
@@ -95,22 +95,17 @@ export default function Footer() {
             <ul className="mt-4 space-y-3 text-sm text-slate-300">
               <li>
                 <Link to="/programs/bachelor" className="hover:text-white transition">
-                  Bachelor
+                  Undergraduate
                 </Link>
               </li>
               <li>
                 <Link to="/programs/masters" className="hover:text-white transition">
-                  Master’s
-                </Link>
-              </li>
-              <li>
-                <Link to="/programs/phd" className="hover:text-white transition">
-                  PhD
+                  Postgraduate/Masters,PhD
                 </Link>
               </li>
               <li>
                 <Link to="/scholarships" className="hover:text-white transition">
-                  Scholarships
+                  Academic Loan
                 </Link>
               </li>
             </ul>
@@ -147,7 +142,7 @@ export default function Footer() {
           <div>
             <h4 className="text-sm font-bold text-white">Subscribe</h4>
             <p className="mt-4 text-sm text-slate-300 leading-relaxed">
-              Get updates about new scholarships, application deadlines, and
+              Get updates about new Academic Loans, application deadlines, and
               upcoming info sessions.
             </p>
 
@@ -176,7 +171,7 @@ export default function Footer() {
 
         {/* BOTTOM */}
         <div className="py-6 text-center text-xs text-slate-400">
-          © {new Date().getFullYear()} Your Company. All rights reserved.
+          © {new Date().getFullYear()} International Mindset PathWays. All rights reserved.
         </div>
       </div>
     </footer>

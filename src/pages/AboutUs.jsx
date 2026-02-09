@@ -47,7 +47,7 @@ export default function AboutUs() {
 
             {/* small badge */}
             <div className="absolute left-5 top-5 rounded-2xl bg-white/90 backdrop-blur px-4 py-2 text-xs font-bold text-gray-900 shadow ring-1 ring-black/5">
-              International Mindset Path Way
+              International Mindset PathWays
             </div>
           </div>
 
@@ -68,7 +68,7 @@ export default function AboutUs() {
             </h2>
 
             <p className="mt-4 text-base leading-relaxed text-gray-600">
-              International Mindset Path Way is a global support platform helping
+              International Mindset PathWays is a global support platform helping
               students and professionals unlock international opportunities.
             </p>
 
@@ -80,8 +80,17 @@ export default function AboutUs() {
               </li>
               <li className="flex gap-3">
                 <span className="mt-1 h-2 w-2 rounded-full bg-blue-600" />
-                Full application support: SOP, CV, documents & submission
+                Full application support: SOP, CV, documents & submission,
               </li>
+              <li className="flex gap-3">
+                <span className="mt-1 h-2 w-2 rounded-full bg-blue-600" />
+                Visa application support and air ticketing for your travel
+              </li>
+              <li className="flex gap-3">
+                <span className="mt-1 h-2 w-2 rounded-full bg-blue-600" />
+                 Culture exchange guidance to help you adapt and succeed abroad
+              </li>
+             
               <li className="flex gap-3">
                 <span className="mt-1 h-2 w-2 rounded-full bg-blue-600" />
                 English test prep & technical coaching for global readiness

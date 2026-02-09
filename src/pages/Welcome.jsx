@@ -2,13 +2,13 @@ import React from "react";
 
 const WORDS = [
   "Study Abroad",
-  "Scholarships",
-  "SOP Writing",
-  "Duolingo Prep",
+  "Visa Support",
+  "Culture Exchange",
+  "Air ticketing",
+  "English Proficiency",
   "Technical Coaching",
   "Internship Support",
-  "Masters",
-  "PhD",
+  "Career Guidance"
 ];
 
 function useTypewriter(words, options = {}) {
@@ -164,10 +164,10 @@ export default function Welcome() {
                   show ? "translate-x-0 opacity-100" : "-translate-x-3 opacity-0",
                 ].join(" ")}
               >
-                We help students and professionals connect with the right schools,
-                universities, and global opportunities — from secondary to university,
-                Masters and PhD. Get support with applications, essays, English tests,
-                and technical challenges, step by step.
+                We help students and professionals connect with the right universities, 
+                and global opportunities. We provide Study Abroad guidance, Visa Support, and Culture Exchange 
+                support, plus Air Ticketing to help you travel smoothly. We also offer English Proficiency preparation, 
+                Technical Coaching, Internship Support, and Career Guidance, step by step.
               </p>
 
               {/* QUICK STEPS */}
@@ -220,10 +220,10 @@ export default function Welcome() {
                 <span className="text-xs font-semibold uppercase tracking-widest opacity-80">
                   Support for:
                 </span>
-                <span className="text-sm font-semibold">Secondary</span>
-                <span className="text-sm font-semibold">University</span>
-                <span className="text-sm font-semibold">Masters</span>
-                <span className="text-sm font-semibold">PhD</span>
+                <span className="text-sm font-semibold">Undergraduate</span>
+                <span className="text-sm font-semibold">Postgraduate</span>
+                <span className="text-sm font-semibold">Visa</span>
+                <span className="text-sm font-semibold">Air_ticket</span>
               </div>
 
               <div className="mt-4 text-xs text-gray-500">

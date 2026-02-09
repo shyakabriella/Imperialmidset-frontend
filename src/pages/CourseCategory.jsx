@@ -63,12 +63,12 @@ export default function CourseCategory() {
           ].join(" ")}
         >
           <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900">
-            School & University Categories
+             University Partners
           </h2>
 
           <p className="mx-auto mt-4 max-w-2xl text-base sm:text-lg text-gray-500 leading-relaxed">
-            Explore a complete selection of education programs — from primary
-            school to university and professional training.
+           Explore a complete selection of university programs — from Undergraduate to 
+           Postgraduate (Master’s & PhD), plus professional training.
           </p>
         </div>
 
@@ -85,7 +85,7 @@ export default function CourseCategory() {
             style={{ transitionDelay: "120ms" }}
           >
             <div className="text-xs uppercase tracking-widest text-white/50">
-              Admissions • Scholarships • Support
+              Admissions • Academic Loan • Support
             </div>
 
             <h3 className="mt-3 text-2xl sm:text-3xl font-extrabold">
@@ -93,7 +93,7 @@ export default function CourseCategory() {
             </h3>
 
             <p className="mt-4 text-sm sm:text-base text-white/70 max-w-sm">
-              Find the right school or university program for you — and apply
+              Find the right university program for you — and apply
               today with confidence.
             </p>
 

@@ -5,14 +5,14 @@ const MENU = [
   {
     label: "Services",
     items: [
-      { label: "Study Abroad (Secondary)", to: "/services/study-abroad/secondary" },
-      { label: "Study Abroad (University)", to: "/services/study-abroad/university" },
-      { label: "Study Abroad (Masters)", to: "/services/study-abroad/masters" },
-      { label: "Study Abroad (PhD)", to: "/services/study-abroad/phd" },
-      { label: "Writing & Essays (SOP/CV)", to: "/services/writing" },
-      { label: "English Tests (Duolingo/IELTS)", to: "/services/english-tests" },
+      { label: "Study Abroad (Undergraduate & Postgraduate)", to: "/services/study-abroad/university" },
+      { label: "Visa Support", to: "/services/Visa" },
+      { label: "Culture Exchange", to: "/services/Culture_exchange" },
+      { label: "Air Ticketing", to: "/services/Air_ticket" },
+      { label: "English Proficiency (Duolingo/IELTS)", to: "/services/english-tests" },
       { label: "Technical Support (Coding)", to: "/services/technical" },
       { label: "Internship Support", to: "/services/internship" },
+      { label: "Career Guidance", to: "/services/Career" },
     ],
   },
   {
