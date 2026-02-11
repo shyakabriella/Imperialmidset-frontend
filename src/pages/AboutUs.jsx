@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 function useInView(options = { threshold: 0.15 }) {
   const ref = React.useRef(null);
@@ -24,6 +25,7 @@ function useInView(options = { threshold: 0.15 }) {
 
 export default function AboutUs() {
   const { ref, inView } = useInView();
+  const navigate = useNavigate();
 
   return (
     <section ref={ref} className="bg-white py-16 sm:py-20">
@@ -45,7 +47,6 @@ export default function AboutUs() {
             />
             <div className="absolute inset-0 bg-black/10" />
 
-            {/* small badge */}
             <div className="absolute left-5 top-5 rounded-2xl bg-white/90 backdrop-blur px-4 py-2 text-xs font-bold text-gray-900 shadow ring-1 ring-black/5">
               International Mindset PathWays
             </div>
@@ -72,7 +73,6 @@ export default function AboutUs() {
               students and professionals unlock international opportunities.
             </p>
 
-            {/* bullet points */}
             <ul className="mt-6 space-y-3 text-sm text-gray-600">
               <li className="flex gap-3">
                 <span className="mt-1 h-2 w-2 rounded-full bg-blue-600" />
@@ -80,7 +80,7 @@ export default function AboutUs() {
               </li>
               <li className="flex gap-3">
                 <span className="mt-1 h-2 w-2 rounded-full bg-blue-600" />
-                Full application support: SOP, CV, documents & submission,
+                Full application support: SOP, CV, documents & submission
               </li>
               <li className="flex gap-3">
                 <span className="mt-1 h-2 w-2 rounded-full bg-blue-600" />
@@ -88,16 +88,14 @@ export default function AboutUs() {
               </li>
               <li className="flex gap-3">
                 <span className="mt-1 h-2 w-2 rounded-full bg-blue-600" />
-                 Culture exchange guidance to help you adapt and succeed abroad
+                Culture exchange guidance to help you adapt and succeed abroad
               </li>
-             
               <li className="flex gap-3">
                 <span className="mt-1 h-2 w-2 rounded-full bg-blue-600" />
                 English test prep & technical coaching for global readiness
               </li>
             </ul>
 
-            {/* Mission & Vision cards */}
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
               <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
                 <div className="text-xs font-extrabold tracking-widest text-gray-900">
@@ -124,7 +122,6 @@ export default function AboutUs() {
               </div>
             </div>
 
-            {/* profile card */}
             <div className="mt-8 flex items-center gap-4">
               <img
                 src="https://i.pravatar.cc/120?img=12"
@@ -141,12 +138,19 @@ export default function AboutUs() {
               </div>
             </div>
 
-            {/* CTA buttons */}
+            {/* ✅ CTA buttons that route */}
             <div className="mt-8 flex flex-wrap gap-3">
-              <button className="rounded-xl bg-gray-900 px-6 py-3 text-sm font-semibold text-white shadow hover:bg-gray-800 transition active:scale-[0.98]">
+              <button
+                onClick={() => navigate("/booking")}
+                className="rounded-xl bg-gray-900 px-6 py-3 text-sm font-semibold text-white shadow hover:bg-gray-800 transition active:scale-[0.98]"
+              >
                 Book a Consultation
               </button>
-              <button className="rounded-xl border border-gray-300 bg-white px-6 py-3 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50 transition active:scale-[0.98]">
+
+              <button
+                onClick={() => navigate("/services")}
+                className="rounded-xl border border-gray-300 bg-white px-6 py-3 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50 transition active:scale-[0.98]"
+              >
                 Explore Services
               </button>
             </div>
