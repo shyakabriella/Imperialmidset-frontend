@@ -46,17 +46,26 @@ export default function CultureExchangeEvents() {
   const events = rawEvents.map((ev) => {
     const dateStart = ev.dateStart || ev.date || "";
     const dateEnd = ev.dateEnd || ev.endDate || ev.date || "";
-    const cover = ev.cover || ev.image || "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1400&q=80";
+    const cover =
+      ev.cover ||
+      ev.image ||
+      "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1400&q=80";
 
-    // tags can come from tags OR highlights OR theme
     const tags =
-      Array.isArray(ev.tags) ? ev.tags :
-      Array.isArray(ev.highlights) ? ev.highlights.slice(0, 6) :
-      ev.theme ? [ev.theme] : [];
+      Array.isArray(ev.tags)
+        ? ev.tags
+        : Array.isArray(ev.highlights)
+        ? ev.highlights.slice(0, 6)
+        : ev.theme
+        ? [ev.theme]
+        : [];
 
-    const summary = ev.summary || ev.overview || ev.desc || "Cultural exchange experience and guided learning.";
+    const summary =
+      ev.summary ||
+      ev.overview ||
+      ev.desc ||
+      "Cultural exchange experience and guided learning.";
 
-    // These fields may not exist in your data yet, so we provide defaults
     const fee = ev.fee || "Free";
     const seats = ev.seats ?? "Limited";
 
@@ -72,13 +81,13 @@ export default function CultureExchangeEvents() {
       summary,
       fee,
       seats,
-      original: ev, // keep original if you need it later
+      original: ev,
     };
   });
 
   const goApply = (event) => {
     navigate(`/services/Culture_exchange/events/${event.id}/apply`, {
-      state: { event }, // passing normalized event ✅
+      state: { event },
     });
   };
 
@@ -102,15 +111,31 @@ export default function CultureExchangeEvents() {
               "linear-gradient(90deg, rgba(47,13,52,0.72) 0%, rgba(47,13,52,0.52) 45%, rgba(47,13,52,0.22) 100%)",
           }}
         />
+
         <div className="relative mx-auto max-w-7xl px-4 pt-12 pb-14">
-          {/* Breadcrumb */}
-          <div className="text-xs text-white/80">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            <span className="mx-1">/</span>
-            <span className="text-white/90">Services</span> <span className="mx-1">/</span>
-            <span className="font-semibold text-white">Culture Exchange Events</span>
+          {/* Breadcrumb + Back Button */}
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div className="text-xs text-white/80">
+              <Link to="/" className="hover:underline">
+                Home
+              </Link>{" "}
+              <span className="mx-1">/</span>
+              <span className="text-white/90">Services</span>{" "}
+              <span className="mx-1">/</span>
+              <span className="font-semibold text-white">
+                Culture Exchange Events
+              </span>
+            </div>
+
+            {/* ✅ BACK BUTTON */}
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              className="rounded-xl border px-4 py-2 text-sm font-semibold bg-white/10 text-white hover:bg-white/15 transition active:scale-[0.98]"
+              style={{ borderColor: "rgba(255,255,255,0.28)" }}
+            >
+              ← Back
+            </button>
           </div>
 
           <div className="mt-8 max-w-2xl">
@@ -121,19 +146,22 @@ export default function CultureExchangeEvents() {
             </div>
 
             <h1 className="mt-4 text-3xl sm:text-5xl font-extrabold text-white leading-tight">
-              Upcoming Culture Exchange Events in Rwanda & Abroad 
+              Upcoming Culture Exchange Events in Rwanda & Abroad
             </h1>
 
             <p className="mt-4 text-white/90 leading-relaxed">
-              We connect Rwandan students to international opportunities and welcome international
-              students to learn Rwandan culture, unity, and reconciliation after the 1994 Genocide
-              against the Tutsi — through respectful learning sessions and curated events.
+              We connect Rwandan students to international opportunities and
+              welcome international students to learn Rwandan culture, unity, and
+              reconciliation after the 1994 Genocide against the Tutsi — through
+              respectful learning sessions and curated events.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3">
               <button
                 onClick={() =>
-                  document.getElementById("events")?.scrollIntoView({ behavior: "smooth" })
+                  document
+                    .getElementById("events")
+                    ?.scrollIntoView({ behavior: "smooth" })
                 }
                 className="rounded-xl px-6 py-3 text-sm font-semibold text-white shadow transition active:scale-[0.98]"
                 style={{ backgroundColor: BRAND.accent }}
@@ -156,32 +184,43 @@ export default function CultureExchangeEvents() {
       <section className="mx-auto max-w-7xl px-4 py-10">
         <div className="grid gap-6 lg:grid-cols-12 lg:items-center">
           <div className="lg:col-span-7">
-            <div className="text-xs font-bold tracking-widest" style={{ color: BRAND.primary }}>
+            <div
+              className="text-xs font-bold tracking-widest"
+              style={{ color: BRAND.primary }}
+            >
               WHAT STUDENTS WILL GAIN
             </div>
             <h2 className="mt-3 text-2xl sm:text-3xl font-extrabold text-gray-900">
-              Learning, culture, leadership & real connection 
+              Learning, culture, leadership & real connection
             </h2>
             <p className="mt-3 text-gray-600 leading-relaxed">
-              Our events are designed to build understanding, respect, and practical life skills:
-              culture adaptation, communication, community engagement, and professional growth.
+              Our events are designed to build understanding, respect, and
+              practical life skills: culture adaptation, communication, community
+              engagement, and professional growth.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-2">
-              {["Cultural Immersion", "Community Visits", "Leadership Sessions", "Networking", "Guided Learning"].map(
-                (t) => (
-                  <Tag key={t}>{t}</Tag>
-                )
-              )}
+              {[
+                "Cultural Immersion",
+                "Community Visits",
+                "Leadership Sessions",
+                "Networking",
+                "Guided Learning",
+              ].map((t) => (
+                <Tag key={t}>{t}</Tag>
+              ))}
             </div>
           </div>
 
           <div className="lg:col-span-5">
             <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-              <div className="text-sm font-extrabold text-gray-900">Quick Note 📝</div>
+              <div className="text-sm font-extrabold text-gray-900">
+                Quick Note 📝
+              </div>
               <p className="mt-2 text-sm text-gray-600 leading-relaxed">
-                You can apply to any event below. Each event has its own application form with your
-                passport number, full name, country, phone number, and more.
+                You can apply to any event below. Each event has its own
+                application form with your passport number, full name, country,
+                phone number, and more.
               </p>
             </div>
           </div>
@@ -192,14 +231,18 @@ export default function CultureExchangeEvents() {
       <section id="events" className="mx-auto max-w-7xl px-4 pb-14">
         <div className="flex items-end justify-between gap-4 flex-wrap">
           <div>
-            <div className="text-xs font-bold tracking-widest" style={{ color: BRAND.primary }}>
+            <div
+              className="text-xs font-bold tracking-widest"
+              style={{ color: BRAND.primary }}
+            >
               UPCOMING EVENTS
             </div>
             <h2 className="mt-2 text-3xl font-extrabold text-gray-900">
-              Choose an event and apply 
+              Choose an event and apply
             </h2>
             <p className="mt-2 text-gray-600">
-              Click <span className="font-semibold">Apply</span> to open the form for that specific event.
+              Click <span className="font-semibold">Apply</span> to open the form
+              for that specific event.
             </p>
           </div>
 
@@ -208,10 +251,12 @@ export default function CultureExchangeEvents() {
           </div>
         </div>
 
-        {/* ✅ Empty state (professional) */}
+        {/* ✅ Empty state */}
         {events.length === 0 ? (
           <div className="mt-8 rounded-3xl border border-gray-200 bg-white p-8 text-center shadow-sm">
-            <div className="text-lg font-extrabold text-gray-900">No events posted yet</div>
+            <div className="text-lg font-extrabold text-gray-900">
+              No events posted yet
+            </div>
             <p className="mt-2 text-sm text-gray-600">
               Please check again soon. We will publish upcoming events here.
             </p>
@@ -231,7 +276,11 @@ export default function CultureExchangeEvents() {
                 className="rounded-3xl border border-gray-200 bg-white shadow-sm overflow-hidden hover:shadow-md transition"
               >
                 <div className="relative h-44">
-                  <img src={e.cover} alt={e.title} className="absolute inset-0 h-full w-full object-cover" />
+                  <img
+                    src={e.cover}
+                    alt={e.title}
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
                   <div className="absolute inset-0 bg-black/15" />
                   <div className="absolute left-4 top-4 flex flex-wrap gap-2">
                     <span className="rounded-full bg-white/90 px-3 py-1 text-[11px] font-bold text-gray-900">
@@ -239,7 +288,10 @@ export default function CultureExchangeEvents() {
                     </span>
                     <span
                       className="rounded-full px-3 py-1 text-[11px] font-bold"
-                      style={{ backgroundColor: "rgba(189,159,117,0.92)", color: "#2F0D34" }}
+                      style={{
+                        backgroundColor: "rgba(189,159,117,0.92)",
+                        color: "#2F0D34",
+                      }}
                     >
                       {e.fee}
                     </span>
@@ -247,13 +299,20 @@ export default function CultureExchangeEvents() {
                 </div>
 
                 <div className="p-5">
-                  <div className="text-xs font-bold tracking-widest" style={{ color: BRAND.primary }}>
+                  <div
+                    className="text-xs font-bold tracking-widest"
+                    style={{ color: BRAND.primary }}
+                  >
                     {formatRange(e.dateStart, e.dateEnd)}
                   </div>
 
-                  <div className="mt-2 text-lg font-extrabold text-gray-900">{e.title}</div>
+                  <div className="mt-2 text-lg font-extrabold text-gray-900">
+                    {e.title}
+                  </div>
 
-                  <div className="mt-2 text-sm text-gray-600 leading-relaxed">{e.summary}</div>
+                  <div className="mt-2 text-sm text-gray-600 leading-relaxed">
+                    {e.summary}
+                  </div>
 
                   <div className="mt-4 flex flex-wrap gap-2">
                     {(e.tags || []).map((t) => (
@@ -263,7 +322,9 @@ export default function CultureExchangeEvents() {
 
                   <div className="mt-5 flex items-center justify-between text-sm text-gray-600">
                     <span>📍 {e.location}</span>
-                    <span className="font-semibold text-gray-800">{String(e.seats)} seats</span>
+                    <span className="font-semibold text-gray-800">
+                      {String(e.seats)} seats
+                    </span>
                   </div>
 
                   <div className="mt-5 flex gap-3">
@@ -278,7 +339,10 @@ export default function CultureExchangeEvents() {
                     <button
                       onClick={() => goApply(e)}
                       className="rounded-xl px-4 py-2.5 text-sm font-semibold border shadow-sm bg-white hover:bg-gray-50 transition"
-                      style={{ borderColor: "rgba(47,13,52,0.25)", color: BRAND.primary }}
+                      style={{
+                        borderColor: "rgba(47,13,52,0.25)",
+                        color: BRAND.primary,
+                      }}
                     >
                       Details
                     </button>
@@ -295,25 +359,31 @@ export default function CultureExchangeEvents() {
         <div className="mx-auto max-w-7xl px-4">
           <div className="rounded-3xl border border-gray-200 bg-white p-8 shadow-sm flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div>
-              <div className="text-xs font-bold tracking-widest" style={{ color: BRAND.primary }}>
+              <div
+                className="text-xs font-bold tracking-widest"
+                style={{ color: BRAND.primary }}
+              >
                 READY TO JOIN?
               </div>
               <div className="mt-2 text-2xl font-extrabold text-gray-900">
-                Apply to an event and we will guide you step-by-step ✅
+                Apply to an event and we will guide you step-by-step 
               </div>
               <div className="mt-2 text-gray-600">
-                Choose an event above and click <span className="font-semibold">Apply</span>.
+                Choose an event above and click{" "}
+                <span className="font-semibold">Apply</span>.
               </div>
             </div>
 
             <button
               onClick={() =>
-                document.getElementById("events")?.scrollIntoView({ behavior: "smooth" })
+                document
+                  .getElementById("events")
+                  ?.scrollIntoView({ behavior: "smooth" })
               }
               className="rounded-xl px-6 py-3 text-sm font-semibold text-white shadow transition active:scale-[0.98]"
               style={{ backgroundColor: BRAND.accent }}
             >
-              Browse Events 🎟️
+              Browse Events 
             </button>
           </div>
         </div>

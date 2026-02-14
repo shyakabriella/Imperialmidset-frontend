@@ -10,6 +10,8 @@ import CultureExchangeEvents from "../pages/services/CultureExchangeEvents";
 import AirTicketing from "../pages/services/AirTicketing";
 import EnglishProficiency from "../pages/services/EnglishProficiency";
 import EnglishTestsDashboard from "../pages/services/EnglishTestsDashboard";
+import CareerGuidance from "../pages/services/CareerGuidance";
+import CareerBookMeeting from "../pages/services/CareerBookMeeting";
 
 export default function AppRoutes() {
   return (
@@ -30,6 +32,8 @@ export default function AppRoutes() {
         <Route path="services/Air_ticket" element={<AirTicketing />} />
         <Route path="services/english-tests" element={<EnglishProficiency />} />
         <Route path="services/english-tests/dashboard" element={<EnglishTestsDashboard />} />
+        <Route path="services/Career" element={<CareerGuidance />} />
+        <Route path="services/Career/book-meeting" element={<CareerBookMeeting />} />
       </Route>
     </Routes>
   );

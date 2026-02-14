@@ -29,13 +29,13 @@ export default function Footer() {
   return (
     <footer
       ref={ref}
-      className="bg-slate-950 text-slate-200 border-t border-white/10"
+      className="bg-slate-950 text-slate-200 border-t border-white/10 overflow-x-hidden"
     >
       <div className="mx-auto max-w-7xl px-4">
         {/* TRUSTED BY */}
         <div
           className={[
-            "py-12 text-center transition-all duration-700 ease-out",
+            "py-12 text-center transition-all duration-700 ease-out transform-gpu",
             inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4",
           ].join(" ")}
         >
@@ -43,7 +43,7 @@ export default function Footer() {
             Trusted by students worldwide
           </h3>
 
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 text-white/60">
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-white/60 px-2">
             <span className="text-lg font-semibold">University Partners</span>
             <span className="text-lg font-semibold">Academic Loan</span>
             <span className="text-lg font-semibold">Visa Guidance</span>
@@ -57,15 +57,15 @@ export default function Footer() {
         {/* MAIN FOOTER GRID */}
         <div
           className={[
-            "py-12 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 transition-all duration-700 ease-out",
+            "py-12 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 transition-all duration-700 ease-out transform-gpu",
             inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6",
           ].join(" ")}
           style={{ transitionDelay: "120ms" }}
         >
           {/* Company */}
-          <div>
+          <div className="min-w-0">
             <h4 className="text-sm font-bold text-white">Company</h4>
-            <ul className="mt-4 space-y-3 text-sm text-slate-300">
+            <ul className="mt-4 space-y-3 text-sm text-slate-300 break-words">
               <li>
                 <Link to="/about" className="hover:text-white transition">
                   About Us
@@ -90,9 +90,9 @@ export default function Footer() {
           </div>
 
           {/* Programs */}
-          <div>
+          <div className="min-w-0">
             <h4 className="text-sm font-bold text-white">Programs</h4>
-            <ul className="mt-4 space-y-3 text-sm text-slate-300">
+            <ul className="mt-4 space-y-3 text-sm text-slate-300 break-words">
               <li>
                 <Link to="/programs/bachelor" className="hover:text-white transition">
                   Undergraduate
@@ -100,7 +100,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link to="/programs/masters" className="hover:text-white transition">
-                  Postgraduate/Masters,PhD
+                  Postgraduate / Masters, PhD
                 </Link>
               </li>
               <li>
@@ -112,9 +112,9 @@ export default function Footer() {
           </div>
 
           {/* Legal */}
-          <div>
+          <div className="min-w-0">
             <h4 className="text-sm font-bold text-white">Legal</h4>
-            <ul className="mt-4 space-y-3 text-sm text-slate-300">
+            <ul className="mt-4 space-y-3 text-sm text-slate-300 break-words">
               <li>
                 <Link to="/terms" className="hover:text-white transition">
                   Terms
@@ -139,20 +139,20 @@ export default function Footer() {
           </div>
 
           {/* Subscribe */}
-          <div>
+          <div className="min-w-0">
             <h4 className="text-sm font-bold text-white">Subscribe</h4>
             <p className="mt-4 text-sm text-slate-300 leading-relaxed">
-              Get updates about new Academic Loans, application deadlines, and
-              upcoming info sessions.
+              Get updates about new Academic Loans, application deadlines, and upcoming info sessions.
             </p>
 
-            <div className="mt-5 flex gap-3">
+            {/* ✅ FIXED: prevent flex overflow */}
+            <div className="mt-5 flex items-center gap-3 min-w-0">
               <input
                 type="email"
                 placeholder="Your Email"
-                className="w-full rounded-xl bg-white/5 px-4 py-2 text-sm text-white placeholder:text-slate-400 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="min-w-0 flex-1 rounded-xl bg-white/5 px-4 py-2 text-sm text-white placeholder:text-slate-400 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              <button className="rounded-xl bg-white px-4 py-2 text-xs font-bold text-slate-900 shadow hover:bg-slate-100 transition active:scale-[0.98]">
+              <button className="shrink-0 rounded-xl bg-white px-4 py-2 text-xs font-bold text-slate-900 shadow hover:bg-slate-100 transition active:scale-[0.98]">
                 SUBMIT
               </button>
             </div>
