@@ -41,7 +41,7 @@ export default function AboutUs() {
             ].join(" ")}
           >
             <img
-              src="/gigi.png"
+              src="/gigi1.jpg"
               alt="Students abroad"
               className="absolute inset-0 h-full w-full object-cover"
             />
@@ -124,7 +124,7 @@ export default function AboutUs() {
 
             <div className="mt-8 flex items-center gap-4">
               <img
-                src="https://i.pravatar.cc/120?img=12"
+                src="/guigyz.jpg"
                 alt="Advisor"
                 className="h-12 w-12 rounded-full object-cover ring-2 ring-white shadow"
               />

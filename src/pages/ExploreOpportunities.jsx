@@ -22,6 +22,25 @@ function useInView(options = { threshold: 0.15 }) {
   return { ref, inView };
 }
 
+/* ✅ local fallback (no external link) */
+const FALLBACK_IMG =
+  "data:image/svg+xml;charset=UTF-8," +
+  encodeURIComponent(`
+  <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800">
+    <defs>
+      <linearGradient id="g" x1="0" x2="1">
+        <stop offset="0" stop-color="#0f172a"/>
+        <stop offset="1" stop-color="#111827"/>
+      </linearGradient>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#g)"/>
+    <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
+      font-family="Arial" font-size="34" fill="#e5e7eb">
+      Opportunity Image
+    </text>
+  </svg>
+`);
+
 const ITEMS = [
   {
     level: "Bachelor • Admissions Support",
@@ -29,8 +48,8 @@ const ITEMS = [
     desc:
       "We help you choose schools that match your grades, budget, and career goals — then prepare a strong application.",
     meta: "Undergraduate • 100+ Partner Schools",
-    price: "START HERE",
-    img: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1600&q=80",
+    cta: "START HERE",
+    img: "/opportunities/bachelor.jpg",
   },
   {
     level: "Master’s • Scholarships Guidance",
@@ -38,8 +57,8 @@ const ITEMS = [
     desc:
       "From program selection to SOP, CV, and documents — we guide you step-by-step and connect you with universities.",
     meta: "Master’s • Scholarship Opportunities",
-    price: "APPLY NOW",
-    img: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1600&q=80",
+    cta: "APPLY NOW",
+    img: "/opportunities/masters.jpg",
   },
   {
     level: "PhD • Research Matching",
@@ -47,35 +66,45 @@ const ITEMS = [
     desc:
       "We help you match with supervisors, prepare research proposals, and submit applications for PhD positions abroad.",
     meta: "PhD • Research & Proposal Support",
-    price: "GET MATCHED",
-    img: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1600&q=80",
+    cta: "GET MATCHED",
+    img: "/opportunities/phd.jpg",
   },
-  {
-    level: "Documents • SOP • CV",
-    title: "Application Documents Review",
-    desc:
-      "Polish your SOP, CV, recommendation letters, and portfolio to increase your chances of acceptance.",
-    meta: "Editing • Review • Coaching",
-    price: "BOOK REVIEW",
-    img: "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1600&q=80",
-  },
+  
   {
     level: "Visa • Travel • Settling",
     title: "Visa & Pre-Departure Support",
     desc:
-      "We assist with visa checklists, interviews prep, accommodation tips, and what to do after arrival.",
+      "We assist with visa checklists, interview prep, accommodation tips, and what to do after arrival.",
     meta: "Visa • Housing • Arrival Help",
-    price: "GET HELP",
-    img: "https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=1600&q=80",
+    cta: "GET HELP",
+    img: "/opportunities/visa.jpg",
   },
   {
-    level: "Partnership • Schools",
-    title: "Connect With Trusted Institutions",
+    level: "Study Loan • Academic Financing",
+    title: "Study Loan Opportunity",
     desc:
-      "We work with universities and schools worldwide to connect students to the right opportunities and programs.",
-    meta: "Global Network • Verified Partners",
-    price: "PARTNER",
-    img: "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1600&q=80",
+      "We guide you through study loan requirements, documents, and application steps — to help fund your education abroad.",
+    meta: "Loan Support • Eligibility • Documentation",
+    cta: "CHECK ELIGIBILITY",
+    img: "/opportunities/study-loan.jpg",
+  },
+  {
+    level: "Culture Exchange • Global Experience",
+    title: "Culture Exchange Programs",
+    desc:
+      "Join exchange programs to experience new cultures, improve communication, and build international confidence.",
+    meta: "Exchange • Travel • Community",
+    cta: "EXPLORE OPTIONS",
+    img: "/opportunities/culture-exchange.jpg",
+  },
+  {
+    level: "Global Networking • Connections",
+    title: "Global Networking & Mentorship",
+    desc:
+      "Connect with students, alumni, mentors, and professionals worldwide — build relationships that open opportunities.",
+    meta: "Networking • Mentorship • Global Community",
+    cta: "JOIN NETWORK",
+    img: "/opportunities/global-networking.jpg",
   },
 ];
 
@@ -93,11 +122,11 @@ export default function ExploreOpportunities() {
           ].join(" ")}
         >
           <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900">
-            Explore Study Opportunities Abroad
+            Explore Opportunities
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-base sm:text-lg text-gray-500 leading-relaxed">
-            We help students worldwide apply to schools and universities abroad —
-            Bachelor, Master’s, and PhD — and connect you with trusted institutions.
+          <p className="mx-auto mt-4 max-w-2xl text-base sm:text-lg text-gray-600 leading-relaxed">
+            We support students worldwide with admissions, visas, study loans, culture exchange,
+            and global networking — from Bachelor to PhD.
           </p>
         </div>
 
@@ -111,13 +140,18 @@ export default function ExploreOpportunities() {
                 "transition-all duration-700 ease-out",
                 inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6",
               ].join(" ")}
-              style={{ transitionDelay: `${idx * 120}ms` }}
+              style={{ transitionDelay: `${idx * 90}ms` }}
             >
               {/* Image */}
               <div className="relative h-48 overflow-hidden">
                 <img
                   src={c.img}
                   alt={c.title}
+                  loading="lazy"
+                  decoding="async"
+                  onError={(e) => {
+                    e.currentTarget.src = FALLBACK_IMG;
+                  }}
                   className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-black/10" />
@@ -140,7 +174,7 @@ export default function ExploreOpportunities() {
                 <div className="mt-4 text-xs text-gray-500">{c.meta}</div>
 
                 <button className="mt-5 inline-flex items-center rounded-xl border border-gray-300 bg-white px-4 py-2 text-xs font-bold text-gray-900 shadow-sm transition hover:bg-gray-50 active:scale-[0.98]">
-                  {c.price}
+                  {c.cta}
                 </button>
               </div>
             </article>

@@ -1,3 +1,32 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ✅ GLOBAL STABILITY FIX (no shaking) */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+
+  /* ✅ prevents horizontal shaking */
+  overflow-x: hidden;
+
+  /* ✅ prevents left/right jump when scrollbar appears/disappears */
+  overflow-y: scroll;
+
+  /* ✅ newer browsers keep scrollbar space stable */
+  scrollbar-gutter: stable;
+
+  /* optional: reduces bounce/scroll weirdness */
+  overscroll-behavior: none;
+}
+
+#root {
+  min-height: 100%;
+  width: 100%;
+}

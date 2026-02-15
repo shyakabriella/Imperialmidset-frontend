@@ -1,48 +1,74 @@
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
+import {
+  Home,
+  LayoutGrid,
+  ClipboardList,
+  BookOpen,
+  Building2,
+  BookMarked,
+  FileText,
+  Globe,
+  BadgeDollarSign,
+  Award,
+  MonitorCog,
+  Users,
+  Star,
+  Info,
+  Phone,
+  Network,
+  CreditCard,
+  Search,
+  HelpCircle,
+} from "lucide-react";
 
+/* ---------------- menu with icons ---------------- */
 const MENU = [
   {
     label: "Services",
+    icon: LayoutGrid,
     items: [
-      { label: "Study Abroad (Undergraduate & Postgraduate)", to: "/services/study-abroad/university" },
-      { label: "Visa Support", to: "/services/Visa" },
-      { label: "Culture Exchange", to: "/services/Culture_exchange" },
-      { label: "Air Ticketing", to: "/services/Air_ticket" },
-      { label: "English Proficiency (Duolingo/IELTS)", to: "/services/english-tests" },
-      { label: "Technical Support (Coding)", to: "/services/technical" },
-      { label: "Internship Support", to: "/services/internship" },
-      { label: "Career Guidance", to: "/services/Career" },
+      { label: "Study Abroad (Undergraduate & Postgraduate)", to: "/services/study-abroad/university", icon: BookMarked },
+      { label: "Visa Support", to: "/services/Visa", icon: FileText },
+      { label: "Culture Exchange", to: "/services/Culture_exchange", icon: Globe },
+      { label: "Air Ticketing", to: "/services/Air_ticket", icon: BadgeDollarSign },
+      { label: "English Proficiency (Duolingo/IELTS)", to: "/services/english-tests", icon: Award },
+      { label: "Technical Support (Coding)", to: "/services/technical", icon: MonitorCog },
+      { label: "Internship Support", to: "/services/internship", icon: Users },
+      { label: "Career Guidance", to: "/services/Career", icon: Star },
     ],
   },
   {
     label: "How It Works",
+    icon: ClipboardList,
     items: [
-      { label: "Process Overview", to: "/how-it-works" },
-      { label: "Pricing & Quotation", to: "/how-it-works/quotation" },
-      { label: "Payment & Invoice", to: "/how-it-works/payment" },
-      { label: "Appointment & Meetings", to: "/how-it-works/appointments" },
-      { label: "Track Progress", to: "/how-it-works/tracking" },
+      { label: "Process Overview", to: "/how-it-works", icon: ClipboardList },
+      { label: "Pricing & Quotation", to: "/how-it-works/quotation", icon: BadgeDollarSign },
+      { label: "Payment & Invoice", to: "/how-it-works/payment", icon: CreditCard },
+      { label: "Appointment & Meetings", to: "/how-it-works/appointments", icon: Phone },
+      { label: "Track Progress", to: "/how-it-works/tracking", icon: Search },
     ],
   },
   {
     label: "Resources",
+    icon: BookOpen,
     items: [
-      { label: "Blog & Guides", to: "/resources/blog" },
-      { label: "Scholarship Tips", to: "/resources/scholarships" },
-      { label: "Country Guides", to: "/resources/countries" },
-      { label: "University Finder", to: "/resources/university-finder" },
-      { label: "FAQ", to: "/faq" },
+      { label: "Blog & Guides", to: "/resources/blog", icon: BookOpen },
+      { label: "Scholarship Tips", to: "/resources/scholarships", icon: Award },
+      { label: "Country Guides", to: "/resources/countries", icon: Globe },
+      { label: "University Finder", to: "/resources/university-finder", icon: Search },
+      { label: "FAQ", to: "/faq", icon: HelpCircle },
     ],
   },
   {
     label: "Company",
+    icon: Building2,
     items: [
-      { label: "About Us", to: "/company/about" },
-      { label: "Our Team", to: "/company/team" },
-      { label: "Partners", to: "/company/partners" },
-      { label: "Testimonials", to: "/company/testimonials" },
-      { label: "Contact", to: "/contact" },
+      { label: "About Us", to: "/company/about", icon: Info },
+      { label: "Our Team", to: "/company/team", icon: Users },
+      { label: "Partners", to: "/company/partners", icon: Network },
+      { label: "Testimonials", to: "/company/testimonials", icon: Star },
+      { label: "Contact", to: "/contact", icon: Phone },
     ],
   },
 ];
@@ -62,7 +88,7 @@ function Chevron({ open }) {
 }
 
 export default function Header() {
-  const [open, setOpen] = React.useState(false); // mobile menu open/close
+  const [open, setOpen] = React.useState(false);
   const [show, setShow] = React.useState(false);
 
   // Desktop dropdown open state (by label)
@@ -71,10 +97,18 @@ export default function Header() {
   // Mobile submenu open state (by label)
   const [mobileSubOpen, setMobileSubOpen] = React.useState({});
 
-  const dropdownRef = React.useRef(null);
+  const navRef = React.useRef(null);
+  const closeTimerRef = React.useRef(null);
 
+  // ✅ show animation runs only once per tab (opacity only, no translate)
   React.useEffect(() => {
+    const alreadyShown = sessionStorage.getItem("headerShown");
+    if (alreadyShown) {
+      setShow(true);
+      return;
+    }
     const t = setTimeout(() => setShow(true), 60);
+    sessionStorage.setItem("headerShown", "1");
     return () => clearTimeout(t);
   }, []);
 
@@ -101,35 +135,21 @@ export default function Header() {
 
   // ✅ Close desktop dropdown on outside click
   React.useEffect(() => {
-    const onClick = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+    const onPointerDown = (e) => {
+      if (navRef.current && !navRef.current.contains(e.target)) {
         setDesktopOpen(null);
       }
     };
-    document.addEventListener("mousedown", onClick);
-    return () => document.removeEventListener("mousedown", onClick);
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
   }, []);
 
-  // ✅ IMPORTANT: Lock body scroll when mobile menu is open (prevents shaking)
+  // ✅ Lock scroll ONLY when mobile menu is open (stable)
   React.useEffect(() => {
-    const prevOverflow = document.body.style.overflow;
-    const prevPaddingRight = document.body.style.paddingRight;
-
-    if (open) {
-      // prevent background scroll
-      document.body.style.overflow = "hidden";
-
-      // optional: avoid tiny width jump when scrollbar disappears
-      const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
-      if (scrollBarWidth > 0) document.body.style.paddingRight = `${scrollBarWidth}px`;
-    } else {
-      document.body.style.overflow = prevOverflow || "";
-      document.body.style.paddingRight = prevPaddingRight || "";
-    }
-
+    const prev = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = open ? "hidden" : "auto";
     return () => {
-      document.body.style.overflow = prevOverflow || "";
-      document.body.style.paddingRight = prevPaddingRight || "";
+      document.documentElement.style.overflow = prev || "auto";
     };
   }, [open]);
 
@@ -138,26 +158,33 @@ export default function Header() {
     setDesktopOpen(null);
   };
 
+  const openDesktopMenu = (label) => {
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    setDesktopOpen(label);
+  };
+
+  const scheduleCloseDesktopMenu = () => {
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    closeTimerRef.current = setTimeout(() => setDesktopOpen(null), 120);
+  };
+
   return (
     <>
-      <header className="sticky top-4 z-50">
+      {/* ✅ Fixed header (solid background) */}
+      <header className="fixed inset-x-0 top-0 z-50">
         <div className="mx-auto max-w-7xl px-4">
           <div
             className={[
-              "flex items-center justify-between rounded-2xl bg-white/80 backdrop-blur-md shadow-md ring-1 ring-black/5",
-              "px-4 py-2",
-              "min-h-[84px]",
-              "transform transition duration-700 ease-out",
-              show ? "translate-y-0 opacity-100" : "-translate-y-3 opacity-0",
+              "h-[84px] flex items-center justify-between rounded-2xl",
+              "bg-white shadow-md ring-1 ring-black/10",
+              "px-4",
+              "transition-opacity duration-500",
+              show ? "opacity-100" : "opacity-0",
             ].join(" ")}
           >
             {/* LOGO */}
-            <Link
-              to="/"
-              className="flex items-center hover:opacity-90 transition"
-              onClick={closeAll}
-            >
-              <div className="h-16 w-48 sm:w-56 overflow-hidden rounded-xl flex items-center">
+            <Link to="/" className="flex items-center hover:opacity-90 transition" onClick={closeAll}>
+              <div className="h-14 w-48 sm:w-56 overflow-hidden rounded-xl flex items-center">
                 <img
                   src="/logoo.png"
                   alt="Logo"
@@ -167,28 +194,30 @@ export default function Header() {
             </Link>
 
             {/* DESKTOP NAV */}
-            <nav ref={dropdownRef} className="hidden lg:flex items-center gap-6">
+            <nav ref={navRef} className="hidden lg:flex items-center gap-6">
               <NavLink
                 to="/"
                 className={({ isActive }) =>
-                  `text-sm font-semibold transition ${
+                  `inline-flex items-center gap-2 text-sm font-semibold transition ${
                     isActive ? "text-gray-900" : "text-gray-700 hover:text-gray-900"
                   }`
                 }
                 onClick={() => setDesktopOpen(null)}
               >
+                <Home className="h-4 w-4" />
                 Home
               </NavLink>
 
               {MENU.map((menu) => {
                 const isOpen = desktopOpen === menu.label;
+                const MenuIcon = menu.icon;
 
                 return (
                   <div
                     key={menu.label}
                     className="relative"
-                    onMouseEnter={() => setDesktopOpen(menu.label)}
-                    onMouseLeave={() => setDesktopOpen(null)}
+                    onMouseEnter={() => openDesktopMenu(menu.label)}
+                    onMouseLeave={scheduleCloseDesktopMenu}
                   >
                     <button
                       type="button"
@@ -199,39 +228,52 @@ export default function Header() {
                         setDesktopOpen((prev) => (prev === menu.label ? null : menu.label))
                       }
                     >
+                      <MenuIcon className="h-4 w-4" />
                       {menu.label} <Chevron open={isOpen} />
                     </button>
 
+                    {/* hover bridge */}
                     <div
                       className={[
-                        "absolute left-0 top-full mt-3 w-72 overflow-hidden rounded-2xl",
-                        "bg-white/95 backdrop-blur-md shadow-xl ring-1 ring-black/10",
-                        "transition-all duration-200",
-                        isOpen
-                          ? "opacity-100 translate-y-0 pointer-events-auto"
-                          : "opacity-0 -translate-y-2 pointer-events-none",
+                        "absolute left-0 top-full pt-3",
+                        isOpen ? "pointer-events-auto" : "pointer-events-none",
                       ].join(" ")}
-                      role="menu"
+                      onMouseEnter={() => openDesktopMenu(menu.label)}
+                      onMouseLeave={scheduleCloseDesktopMenu}
                     >
-                      <div className="p-2">
-                        {menu.items.map((it) => (
-                          <NavLink
-                            key={it.to}
-                            to={it.to}
-                            role="menuitem"
-                            onClick={closeAll}
-                            className={({ isActive }) =>
-                              [
-                                "block rounded-xl px-3 py-2 text-sm transition",
-                                isActive
-                                  ? "bg-gray-100 text-gray-900 font-semibold"
-                                  : "text-gray-700 hover:bg-gray-50 hover:text-gray-900",
-                              ].join(" ")
-                            }
-                          >
-                            {it.label}
-                          </NavLink>
-                        ))}
+                      <div
+                        className={[
+                          "w-80 overflow-hidden rounded-2xl",
+                          "bg-white shadow-xl ring-1 ring-black/10",
+                          "transition-all duration-150",
+                          isOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2",
+                        ].join(" ")}
+                        role="menu"
+                      >
+                        <div className="p-2">
+                          {menu.items.map((it) => {
+                            const ItemIcon = it.icon;
+                            return (
+                              <NavLink
+                                key={it.to}
+                                to={it.to}
+                                role="menuitem"
+                                onClick={closeAll}
+                                className={({ isActive }) =>
+                                  [
+                                    "flex items-start gap-3 rounded-xl px-3 py-2.5 text-sm transition leading-snug",
+                                    isActive
+                                      ? "bg-gray-100 text-gray-900 font-semibold"
+                                      : "text-gray-700 hover:bg-gray-50 hover:text-gray-900",
+                                  ].join(" ")
+                                }
+                              >
+                                <ItemIcon className="h-4 w-4 mt-0.5 shrink-0 opacity-80" />
+                                <span className="block">{it.label}</span>
+                              </NavLink>
+                            );
+                          })}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -241,16 +283,13 @@ export default function Header() {
 
             {/* right actions (desktop) */}
             <div className="hidden lg:flex items-center gap-3">
-              <NavLink
-                to="/login"
-                className="text-sm font-semibold text-gray-700 hover:text-gray-900 transition"
-              >
+              <NavLink to="/login" className="text-sm font-semibold text-gray-700 hover:text-gray-900 transition">
                 LOG IN
               </NavLink>
 
               <NavLink
                 to="/register"
-                className="inline-flex items-center rounded-xl bg-gray-900 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-gray-800 hover:-translate-y-0.5 active:translate-y-0"
+                className="inline-flex items-center rounded-xl bg-gray-900 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-gray-800 active:scale-[0.98]"
               >
                 GET STARTED
               </NavLink>
@@ -274,29 +313,29 @@ export default function Header() {
               open ? "max-h-[80vh] opacity-100 mt-2" : "max-h-0 opacity-0 mt-0",
             ].join(" ")}
           >
-            <div className="rounded-2xl bg-white/90 backdrop-blur-md shadow-md ring-1 ring-black/5 p-4">
+            <div className="rounded-2xl bg-white shadow-md ring-1 ring-black/10 p-4">
               <div className="flex flex-col gap-2">
                 <NavLink
                   to="/"
                   onClick={closeAll}
                   className={({ isActive }) =>
-                    `rounded-xl px-3 py-2 text-sm font-semibold transition ${
+                    `flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition ${
                       isActive
                         ? "bg-gray-100 text-gray-900"
                         : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
                     }`
                   }
                 >
+                  <Home className="h-4 w-4" />
                   Home
                 </NavLink>
 
                 {MENU.map((menu) => {
                   const isSubOpen = !!mobileSubOpen[menu.label];
+                  const MenuIcon = menu.icon;
+
                   return (
-                    <div
-                      key={menu.label}
-                      className="rounded-2xl border border-gray-200/80 overflow-hidden"
-                    >
+                    <div key={menu.label} className="rounded-2xl border border-gray-200/80 overflow-hidden">
                       <button
                         type="button"
                         onClick={() =>
@@ -308,37 +347,42 @@ export default function Header() {
                         className="w-full flex items-center justify-between px-3 py-2 text-sm font-semibold text-gray-800 hover:bg-gray-50 transition"
                         aria-expanded={isSubOpen}
                       >
-                        <span>{menu.label}</span>
+                        <span className="inline-flex items-center gap-2">
+                          <MenuIcon className="h-4 w-4" />
+                          {menu.label}
+                        </span>
                         <Chevron open={isSubOpen} />
                       </button>
 
                       <div
                         className={[
                           "grid transition-all duration-300 ease-out",
-                          isSubOpen
-                            ? "grid-rows-[1fr] opacity-100"
-                            : "grid-rows-[0fr] opacity-0",
+                          isSubOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
                         ].join(" ")}
                       >
                         <div className="overflow-hidden">
                           <div className="p-2">
-                            {menu.items.map((it) => (
-                              <NavLink
-                                key={it.to}
-                                to={it.to}
-                                onClick={closeAll}
-                                className={({ isActive }) =>
-                                  [
-                                    "block rounded-xl px-3 py-2 text-sm transition",
-                                    isActive
-                                      ? "bg-gray-100 text-gray-900 font-semibold"
-                                      : "text-gray-700 hover:bg-gray-50 hover:text-gray-900",
-                                  ].join(" ")
-                                }
-                              >
-                                {it.label}
-                              </NavLink>
-                            ))}
+                            {menu.items.map((it) => {
+                              const ItemIcon = it.icon;
+                              return (
+                                <NavLink
+                                  key={it.to}
+                                  to={it.to}
+                                  onClick={closeAll}
+                                  className={({ isActive }) =>
+                                    [
+                                      "flex items-start gap-3 rounded-xl px-3 py-2.5 text-sm transition leading-snug",
+                                      isActive
+                                        ? "bg-gray-100 text-gray-900 font-semibold"
+                                        : "text-gray-700 hover:bg-gray-50 hover:text-gray-900",
+                                    ].join(" ")
+                                  }
+                                >
+                                  <ItemIcon className="h-4 w-4 mt-0.5 shrink-0 opacity-80" />
+                                  <span>{it.label}</span>
+                                </NavLink>
+                              );
+                            })}
                           </div>
                         </div>
                       </div>
@@ -347,11 +391,7 @@ export default function Header() {
                 })}
 
                 <div className="pt-3 border-t border-gray-200 flex items-center gap-3">
-                  <NavLink
-                    to="/login"
-                    onClick={closeAll}
-                    className="text-sm font-semibold text-gray-700 hover:text-gray-900 transition"
-                  >
+                  <NavLink to="/login" onClick={closeAll} className="text-sm font-semibold text-gray-700 hover:text-gray-900 transition">
                     LOG IN
                   </NavLink>
 
@@ -369,7 +409,7 @@ export default function Header() {
         </div>
       </header>
 
-      {/* ✅ MOBILE OVERLAY (OUTSIDE CONTAINER) */}
+      {/* MOBILE OVERLAY (behind header) */}
       <div
         className={[
           "lg:hidden fixed inset-0 z-40 transition-opacity duration-300",

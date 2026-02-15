@@ -1,6 +1,6 @@
 import Welcome from "./Welcome";
 import Explore from "./Explore";
-import CourseCategory from "./CourseCategory";
+import CourseCategory from "./UniversityPartners";
 import ExploreOpportunities from "./ExploreOpportunities";
 import AboutUs from "./AboutUs";
 import UpcomingEvents from "./UpcomingEvents";

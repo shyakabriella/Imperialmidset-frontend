@@ -8,8 +8,11 @@ const WORDS = [
   "English Proficiency",
   "Technical Coaching",
   "Internship Support",
-  "Career Guidance"
+  "Career Guidance",
 ];
+
+// ✅ Always reserve space using the longest word (auto, future-proof)
+const LONGEST_WORD = WORDS.reduce((a, b) => (a.length >= b.length ? a : b), "");
 
 function useTypewriter(words, options = {}) {
   const {
@@ -21,7 +24,7 @@ function useTypewriter(words, options = {}) {
 
   const [wordIndex, setWordIndex] = React.useState(0);
   const [text, setText] = React.useState("");
-  const [mode, setMode] = React.useState("typing"); 
+  const [mode, setMode] = React.useState("typing");
 
   React.useEffect(() => {
     const currentWord = words[wordIndex];
@@ -64,6 +67,7 @@ function useTypewriter(words, options = {}) {
 
 export default function Welcome() {
   const [show, setShow] = React.useState(false);
+
   const { text } = useTypewriter(WORDS, {
     typeSpeed: 70,
     deleteSpeed: 45,
@@ -124,12 +128,10 @@ export default function Welcome() {
             ].join(" ")}
           >
             <div className="rounded-3xl bg-white/75 backdrop-blur-lg p-7 sm:p-10 shadow-xl ring-1 ring-black/5">
-             
-
               {/* TITLE */}
               <h1
                 className={[
-                  "mt-5 text-3xl sm:text-5xl font-extrabold tracking-tight text-gray-900",
+                  "mt-5 text-3xl sm:text-5xl font-extrabold tracking-tight text-gray-900 leading-[1.05]",
                   "transform transition duration-700",
                   show ? "translate-x-0 opacity-100" : "-translate-x-3 opacity-0",
                 ].join(" ")}
@@ -140,18 +142,20 @@ export default function Welcome() {
                 </span>
                 and Unlock{" "}
                 <span className="relative inline-flex items-baseline">
-                  {/* Typewriter word pill */}
-                  <span className="ml-2 inline-flex items-baseline">
-                    <span className="rounded-xl bg-gray-900 px-3 py-1 text-white shadow">
-                      <span className="inline-flex items-baseline">
-                        <span className="inline-block min-w-[10ch]">
-                          {text}
-                        </span>
+                  {/* ✅ FIX: typewriter pill reserves width using invisible longest word */}
+                  <span className="ml-2 inline-flex items-baseline rounded-xl bg-gray-900 px-3 py-1 text-white shadow whitespace-nowrap leading-none">
+                    <span className="relative inline-block align-baseline">
+                      {/* reserve width (never wraps) */}
+                      <span className="invisible whitespace-nowrap">{LONGEST_WORD}</span>
 
-                        {/* Blinking cursor */}
-                        <span className="ml-0.5 inline-block w-[2px] h-[1.1em] bg-white animate-pulse" />
+                      {/* actual typing text overlays, no layout shift */}
+                      <span className="absolute left-0 top-0 whitespace-nowrap">
+                        {text}
                       </span>
                     </span>
+
+                    {/* cursor */}
+                    <span className="ml-0.5 inline-block w-[2px] h-[1.1em] bg-white animate-pulse" />
                   </span>
                 </span>
               </h1>
@@ -164,9 +168,9 @@ export default function Welcome() {
                   show ? "translate-x-0 opacity-100" : "-translate-x-3 opacity-0",
                 ].join(" ")}
               >
-                We help students and professionals connect with the right universities, 
-                and global opportunities. We provide Study Abroad guidance, Visa Support, and Culture Exchange 
-                support, plus Air Ticketing to help you travel smoothly. We also offer English Proficiency preparation, 
+                We help students and professionals connect with the right universities,
+                and global opportunities. We provide Study Abroad guidance, Visa Support, and Culture Exchange
+                support, plus Air Ticketing to help you travel smoothly. We also offer English Proficiency preparation,
                 Technical Coaching, Internship Support, and Career Guidance, step by step.
               </p>
 
@@ -227,7 +231,7 @@ export default function Welcome() {
               </div>
 
               <div className="mt-4 text-xs text-gray-500">
-              Get quotation by email • Transparent pricing • Appointment scheduling
+                Get quotation by email • Transparent pricing • Appointment scheduling
               </div>
             </div>
           </div>
