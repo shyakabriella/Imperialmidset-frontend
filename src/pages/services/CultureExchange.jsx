@@ -1,5 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { CULTURE_EVENTS } from "../../data/cultureEvents";
 
 /** In-view animation hook */
 function useInView(options = { threshold: 0.15 }) {
@@ -24,51 +25,36 @@ function useInView(options = { threshold: 0.15 }) {
   return { ref, inView };
 }
 
-/** Brand colors (logo style) */
+/** Brand colors */
 const BRAND = {
-  primary: "#2F0D34", // purple
-  accent: "#BD9F75", // gold
+  primary: "#2F0D34",
+  accent: "#BD9F75",
 };
 
-/**
- * ✅ Images:
- * Option A (Recommended): Put your own images in /public and use paths like "/images/culture-1.jpg"
- * Option B: Keep these remote images (already working). You can replace later.
- */
+/** ✅ Local images (put them in: public/culture/) */
 const IMAGES = {
-  heroMain:
-    "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1400&q=80",
-  hero1:
-    "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80",
-  hero2:
-    "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1200&q=80",
-  hero3:
-    "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80",
-  strip: [
-    "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=80",
-    "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&w=1200&q=80",
-    "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1200&q=80",
-    "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80",
-  ],
-  section:
-    "https://images.unsplash.com/photo-1520975693416-35a01f4b66aa?auto=format&fit=crop&w=1400&q=80",
+  heroMain: "/culture/hero-main.jpg",
+  hero1: "/culture/hero-3.jpg",
+  hero2: "/culture/hero-2.jpg",
+  hero3: "/culture/hero-1.jpg",
+  strip: ["/culture/strip-1.jpg", "/culture/strip-2.jpg", "/culture/strip-3.jpg", "/culture/strip-4.jpg"],
+  section: "/culture/section1.jpg",
+  programs: ["/culture/hostfamily.jpg", "/culture/program-2.jpg", "/culture/section.jpg"],
+  support: ["/culture/program-1.jpg", "/culture/etiqueting-1.jpg", "/culture/etiqueting-2.jpg", "/culture/etiqueting-3.jpg"],
 };
 
 const PROGRAMS = [
   {
     title: "Student Culture Exchange",
-    desc: "Support for students joining cultural exchange programs, host families, and community integration.",
-    icon: "🎓",
+    desc: "Support for students joining exchange programs, host families, and community integration.",
   },
   {
     title: "Work / Internship Exchange",
-    desc: "Guidance for adapting to workplace culture, communication style, and professional etiquette.",
-    icon: "💼",
+    desc: "Guidance for workplace culture, communication style, and professional etiquette.",
   },
   {
     title: "Community & Networking",
-    desc: "We connect you with communities, events, and safe social circles to reduce isolation abroad.",
-    icon: "🤝",
+    desc: "We guide you to find safe communities, events, and networks to reduce isolation abroad.",
   },
 ];
 
@@ -76,22 +62,18 @@ const SUPPORT = [
   {
     title: "Pre-departure Orientation",
     desc: "Culture shock, expectations, rules, safety tips, budgeting, and simple planning.",
-    icon: "🧭",
   },
   {
     title: "Communication & Etiquette",
-    desc: "How to speak professionally, how to behave respectfully, and how to avoid misunderstandings.",
-    icon: "🗣️",
+    desc: "How to speak professionally, behave respectfully, and avoid misunderstandings.",
   },
   {
     title: "Settling-in Support",
-    desc: "Accommodation guidance, transportation tips, and adapting to the daily lifestyle.",
-    icon: "🏡",
+    desc: "Accommodation guidance, transportation tips, and adapting to daily lifestyle.",
   },
   {
     title: "Cultural Confidence Coaching",
-    desc: "Confidence-building and mindset coaching so you can adapt and succeed abroad.",
-    icon: "✨",
+    desc: "Confidence coaching so you adapt faster, connect better, and succeed abroad.",
   },
 ];
 
@@ -116,7 +98,7 @@ const CHECKLIST = [
 const FAQS = [
   {
     q: "What is culture exchange support?",
-    a: "It is guidance that helps you adapt to the new culture — communication, etiquette, lifestyle, safety, and integration with people.",
+    a: "It is guidance that helps you adapt to a new culture: communication, etiquette, lifestyle, safety, and integration with people.",
   },
   {
     q: "Is it only for students?",
@@ -160,28 +142,54 @@ function Stat({ label, value }) {
   );
 }
 
-function Card({ icon, title, desc }) {
+function ImageCard({ title, desc, img }) {
   return (
-    <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition">
-      <div className="flex items-center gap-3">
-        <div
-          className="h-11 w-11 rounded-2xl flex items-center justify-center text-lg"
-          style={{ backgroundColor: "rgba(189,159,117,0.18)" }}
-        >
-          {icon}
-        </div>
-        <div className="text-sm font-extrabold text-gray-900">{title}</div>
+    <div className="rounded-3xl border border-gray-200 bg-white shadow-sm hover:shadow-md transition overflow-hidden">
+      <div className="h-40 w-full overflow-hidden">
+        <img
+          src={img}
+          alt={title}
+          className="h-full w-full object-cover hover:scale-[1.04] transition duration-500"
+        />
       </div>
-      <p className="mt-3 text-sm text-gray-600 leading-relaxed">{desc}</p>
+      <div className="p-6">
+        <div className="text-sm font-extrabold text-gray-900">{title}</div>
+        <p className="mt-2 text-sm text-gray-600 leading-relaxed">{desc}</p>
+      </div>
     </div>
   );
 }
 
-export default function CultureExchange() {
-  const { ref, inView } = useInView();
+function normalizeEvent(ev) {
+  const dateStart = ev.dateStart || ev.date || "";
+  const dateEnd = ev.dateEnd || ev.endDate || ev.date || "";
+  const cover =
+    ev.cover || ev.image || "/culture/event-default.jpg"; // optional local fallback
 
+  return {
+    id: ev.id,
+    title: ev.title,
+    audience: ev.audience || "Students",
+    location: ev.location || "Kigali, Rwanda",
+    dateStart,
+    dateEnd,
+    cover,
+    summary: ev.summary || ev.overview || ev.desc || "Culture exchange experience and guided learning.",
+    fee: ev.fee || "Free",
+    seats: ev.seats ?? "Limited",
+  };
+}
+
+export default function CultureExchange() {
+  const navigate = useNavigate();
+  const { ref, inView } = useInView();
   const formRef = React.useRef(null);
   const [faqOpen, setFaqOpen] = React.useState(0);
+
+  // Preview first 3 events (if any)
+  const eventsPreview = (Array.isArray(CULTURE_EVENTS) ? CULTURE_EVENTS : [])
+    .slice(0, 3)
+    .map(normalizeEvent);
 
   const [form, setForm] = React.useState({
     fullName: "",
@@ -197,11 +205,17 @@ export default function CultureExchange() {
   const submit = (e) => {
     e.preventDefault();
     console.log("Culture Exchange Inquiry:", form);
-    alert("✅ Thanks! We received your request. We will contact you soon.");
+    alert("Thanks! We received your request. We will contact you soon.");
   };
 
   const inputBase =
     "mt-1 w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[rgba(47,13,52,0.18)]";
+
+  const goEvents = () => navigate("/services/Culture_exchange/events");
+
+  const goApply = (event) => {
+    navigate(`/services/Culture_exchange/events/${event.id}/apply`, { state: { event } });
+  };
 
   return (
     <div className="bg-white relative">
@@ -226,10 +240,10 @@ export default function CultureExchange() {
         </div>
       </div>
 
-      {/* HERO with image collage (unique style) */}
+      {/* HERO */}
       <section ref={ref} className="mx-auto max-w-7xl px-4 py-10 sm:py-14">
         <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
-          {/* Left text */}
+          {/* Left */}
           <div
             className={[
               "lg:col-span-6 transition-all duration-700 ease-out",
@@ -237,13 +251,13 @@ export default function CultureExchange() {
             ].join(" ")}
           >
             <div className="flex flex-wrap gap-2">
-              <SoftPill>🌍 Culture Exchange</SoftPill>
+              <SoftPill>Culture Exchange</SoftPill>
               <SoftPill>Preparation • Adaptation • Confidence</SoftPill>
               <SoftPill>Online Guidance</SoftPill>
             </div>
 
             <h1 className="mt-4 text-3xl sm:text-5xl font-extrabold text-gray-900 leading-tight">
-              Adapt faster abroad — feel confident in a new culture 
+              Adapt faster abroad and feel confident in a new culture
             </h1>
 
             <p className="mt-4 text-gray-600 leading-relaxed">
@@ -251,7 +265,6 @@ export default function CultureExchange() {
               and integrate smoothly in your new environment.
             </p>
 
-            {/* ✅ Hero buttons (includes Upcoming Events link) */}
             <div className="mt-6 flex flex-wrap gap-3">
               <button
                 type="button"
@@ -259,25 +272,17 @@ export default function CultureExchange() {
                 className="rounded-xl px-6 py-3 text-sm font-semibold text-white shadow transition active:scale-[0.98]"
                 style={{ backgroundColor: BRAND.primary }}
               >
-                Request Guidance 📩
+                Request Guidance
               </button>
 
               <button
                 type="button"
-                onClick={() => document.getElementById("middle")?.scrollIntoView({ behavior: "smooth" })}
+                onClick={goEvents}
                 className="rounded-xl border bg-white px-6 py-3 text-sm font-semibold shadow-sm transition active:scale-[0.98]"
                 style={{ borderColor: BRAND.accent, color: BRAND.primary }}
               >
-                See Destinations & FAQ 👇
+                Browse Events
               </button>
-
-              <Link
-                to="/services/Culture_exchange/events"
-                className="rounded-xl px-6 py-3 text-sm font-semibold text-white shadow transition active:scale-[0.98]"
-                style={{ backgroundColor: BRAND.primary }}
-              >
-                View Upcoming Events 
-              </Link>
             </div>
 
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
@@ -297,11 +302,7 @@ export default function CultureExchange() {
           >
             <div className="grid gap-4 sm:grid-cols-12">
               <div className="sm:col-span-7 overflow-hidden rounded-3xl shadow-lg ring-1 ring-black/10">
-                <img
-                  src={IMAGES.heroMain}
-                  alt="Culture exchange"
-                  className="h-[320px] w-full object-cover"
-                />
+                <img src={IMAGES.heroMain} alt="Culture exchange" className="h-[320px] w-full object-cover" />
               </div>
 
               <div className="sm:col-span-5 grid gap-4">
@@ -319,13 +320,99 @@ export default function CultureExchange() {
             </div>
 
             <div className="mt-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
-              <div className="text-sm font-extrabold text-gray-900">What you gain </div>
+              <div className="text-sm font-extrabold text-gray-900">What you gain</div>
               <div className="mt-1 text-sm text-gray-600">
                 Confidence • Communication • Social integration • Professional etiquette
               </div>
             </div>
           </div>
         </div>
+      </section>
+
+      {/* ✅ EVENTS PREVIEW (links to events + apply) */}
+      <section className="mx-auto max-w-7xl px-4 pb-14">
+        <div className="flex items-end justify-between gap-4 flex-wrap">
+          <div>
+            <Kicker>UPCOMING EVENTS</Kicker>
+            <h2 className="mt-2 text-3xl font-extrabold text-gray-900">Apply to a culture event</h2>
+            <p className="mt-2 text-gray-600">
+              You can browse all events, or apply directly from here.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={goEvents}
+            className="rounded-xl px-5 py-2.5 text-sm font-semibold text-white shadow active:scale-[0.98]"
+            style={{ backgroundColor: BRAND.primary }}
+          >
+            View all events
+          </button>
+        </div>
+
+        {eventsPreview.length === 0 ? (
+          <div className="mt-8 rounded-3xl border border-gray-200 bg-white p-8 text-center shadow-sm">
+            <div className="text-lg font-extrabold text-gray-900">No events yet</div>
+            <p className="mt-2 text-sm text-gray-600">We will publish upcoming events here soon.</p>
+            <button
+              type="button"
+              onClick={goEvents}
+              className="inline-flex mt-5 rounded-xl px-6 py-3 text-sm font-semibold text-white shadow transition"
+              style={{ backgroundColor: BRAND.primary }}
+            >
+              Go to Events page
+            </button>
+          </div>
+        ) : (
+          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {eventsPreview.map((e) => (
+              <div
+                key={e.id}
+                className="rounded-3xl border border-gray-200 bg-white shadow-sm overflow-hidden hover:shadow-md transition"
+              >
+                <div className="relative h-44">
+                  <img src={e.cover} alt={e.title} className="absolute inset-0 h-full w-full object-cover" />
+                  <div className="absolute inset-0 bg-black/10" />
+                  <div className="absolute left-4 top-4 flex flex-wrap gap-2">
+                    <span className="rounded-full bg-white/90 px-3 py-1 text-[11px] font-bold text-gray-900">
+                      {e.audience}
+                    </span>
+                    <span
+                      className="rounded-full px-3 py-1 text-[11px] font-bold"
+                      style={{ backgroundColor: "rgba(189,159,117,0.92)", color: BRAND.primary }}
+                    >
+                      {e.fee}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="p-5">
+                  <div className="text-lg font-extrabold text-gray-900">{e.title}</div>
+                  <div className="mt-2 text-sm text-gray-600 leading-relaxed">{e.summary}</div>
+
+                  <div className="mt-5 flex gap-3">
+                    <button
+                      type="button"
+                      onClick={() => goApply(e)}
+                      className="flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold text-white shadow transition active:scale-[0.98]"
+                      style={{ backgroundColor: BRAND.primary }}
+                    >
+                      Apply
+                    </button>
+                    <button
+                      type="button"
+                      onClick={goEvents}
+                      className="rounded-xl px-4 py-2.5 text-sm font-semibold border shadow-sm bg-white hover:bg-gray-50 transition"
+                      style={{ borderColor: "rgba(47,13,52,0.25)", color: BRAND.primary }}
+                    >
+                      More events
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* PHOTO STRIP */}
@@ -354,13 +441,13 @@ export default function CultureExchange() {
       <section className="mx-auto max-w-7xl px-4 pb-14">
         <div className="text-center">
           <Kicker>PROGRAMS</Kicker>
-          <h2 className="mt-3 text-3xl font-extrabold text-gray-900">Who this is for 🎯</h2>
+          <h2 className="mt-3 text-3xl font-extrabold text-gray-900">Who this is for</h2>
           <p className="mt-3 text-gray-600">Different journeys need different preparation.</p>
         </div>
 
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {PROGRAMS.map((p) => (
-            <Card key={p.title} icon={p.icon} title={p.title} desc={p.desc} />
+          {PROGRAMS.map((p, idx) => (
+            <ImageCard key={p.title} title={p.title} desc={p.desc} img={IMAGES.programs[idx] || IMAGES.heroMain} />
           ))}
         </div>
       </section>
@@ -378,51 +465,52 @@ export default function CultureExchange() {
             <div className="lg:col-span-7">
               <Kicker>WHAT WE SUPPORT</Kicker>
               <h2 className="mt-3 text-3xl font-extrabold text-gray-900">
-                Practical guidance you can use immediately 
+                Practical guidance you can use immediately
               </h2>
               <p className="mt-3 text-gray-600 leading-relaxed">
                 We focus on real-life situations: communication, etiquette, confidence, safety, and community.
               </p>
 
               <div className="mt-8 grid gap-4 sm:grid-cols-2">
-                {SUPPORT.map((s) => (
-                  <div key={s.title} className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="h-10 w-10 rounded-2xl flex items-center justify-center"
-                        style={{ backgroundColor: "rgba(189,159,117,0.18)" }}
-                      >
-                        {s.icon}
-                      </div>
-                      <div className="text-sm font-extrabold text-gray-900">{s.title}</div>
-                    </div>
-                    <p className="mt-3 text-sm text-gray-600 leading-relaxed">{s.desc}</p>
-                  </div>
+                {SUPPORT.map((s, idx) => (
+                  <ImageCard key={s.title} title={s.title} desc={s.desc} img={IMAGES.support[idx] || IMAGES.hero1} />
                 ))}
               </div>
 
-              <button
-                type="button"
-                onClick={() => formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
-                className="mt-8 rounded-xl px-6 py-3 text-sm font-semibold text-white shadow transition active:scale-[0.98]"
-                style={{ backgroundColor: BRAND.primary }}
-              >
-                Start my culture coaching 
-              </button>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={() => formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                  className="rounded-xl px-6 py-3 text-sm font-semibold text-white shadow transition active:scale-[0.98]"
+                  style={{ backgroundColor: BRAND.primary }}
+                >
+                  Start coaching
+                </button>
+
+                <button
+                  type="button"
+                  onClick={goEvents}
+                  className="rounded-xl border bg-white px-6 py-3 text-sm font-semibold shadow-sm transition active:scale-[0.98]"
+                  style={{ borderColor: BRAND.accent, color: BRAND.primary }}
+                >
+                  Browse Events
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* MIDDLE (Destinations + Checklist + FAQ) */}
+      {/* MIDDLE */}
       <section id="middle" className="mx-auto max-w-7xl px-4 py-14">
         <div className="text-center">
-          <Kicker>MIDDLE GUIDE</Kicker>
-          <h2 className="mt-3 text-3xl font-extrabold text-gray-900">Destinations, checklist & FAQ </h2>
-          <p className="mt-3 text-gray-600">We put the key guidance in the middle so users see it early.</p>
+          <Kicker>GUIDE</Kicker>
+          <h2 className="mt-3 text-3xl font-extrabold text-gray-900">Destinations, checklist and FAQ</h2>
+          <p className="mt-3 text-gray-600">Key guidance placed early to help users decide quickly.</p>
         </div>
 
         <div className="mt-10 grid gap-6 lg:grid-cols-2">
+          {/* Destinations */}
           <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <Kicker>DESTINATIONS</Kicker>
@@ -434,7 +522,7 @@ export default function CultureExchange() {
               </span>
             </div>
 
-            <h3 className="mt-2 text-2xl font-extrabold text-gray-900">Where we guide you 🌍</h3>
+            <h3 className="mt-2 text-2xl font-extrabold text-gray-900">Where we guide you</h3>
             <p className="mt-2 text-sm text-gray-600">
               We guide you based on your destination culture and daily lifestyle expectations.
             </p>
@@ -447,8 +535,18 @@ export default function CultureExchange() {
                 </div>
               ))}
             </div>
+
+            <button
+              type="button"
+              onClick={goEvents}
+              className="mt-6 w-full rounded-xl px-5 py-2.5 text-sm font-semibold text-white shadow transition active:scale-[0.98]"
+              style={{ backgroundColor: BRAND.primary }}
+            >
+              Browse Events
+            </button>
           </div>
 
+          {/* Checklist */}
           <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <Kicker>READINESS CHECKLIST</Kicker>
@@ -460,10 +558,8 @@ export default function CultureExchange() {
               </span>
             </div>
 
-            <h3 className="mt-2 text-2xl font-extrabold text-gray-900">Be ready before you travel ✅</h3>
-            <p className="mt-2 text-sm text-gray-600">
-              These small things reduce stress and culture shock a lot.
-            </p>
+            <h3 className="mt-2 text-2xl font-extrabold text-gray-900">Be ready before you travel</h3>
+            <p className="mt-2 text-sm text-gray-600">These small things reduce stress and culture shock a lot.</p>
 
             <ul className="mt-5 space-y-2 text-sm text-gray-700">
               {CHECKLIST.map((c) => (
@@ -480,15 +576,16 @@ export default function CultureExchange() {
               className="mt-6 w-full rounded-xl px-5 py-2.5 text-sm font-semibold text-white shadow transition active:scale-[0.98]"
               style={{ backgroundColor: BRAND.primary }}
             >
-              Get coaching support 📩
+              Get coaching support
             </button>
           </div>
         </div>
 
+        {/* FAQ */}
         <div className="mt-8 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
           <div className="text-center">
             <Kicker>FAQ</Kicker>
-            <h3 className="mt-2 text-2xl font-extrabold text-gray-900">Common questions ❓</h3>
+            <h3 className="mt-2 text-2xl font-extrabold text-gray-900">Common questions</h3>
           </div>
 
           <div className="mt-6 mx-auto max-w-3xl space-y-3">
@@ -514,9 +611,7 @@ export default function CultureExchange() {
                       open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
                     ].join(" ")}
                   >
-                    <div className="overflow-hidden px-5 pb-4 text-sm text-gray-600 leading-relaxed">
-                      {f.a}
-                    </div>
+                    <div className="overflow-hidden px-5 pb-4 text-sm text-gray-600 leading-relaxed">{f.a}</div>
                   </div>
                 </div>
               );
@@ -531,17 +626,17 @@ export default function CultureExchange() {
           <div className="grid gap-10 lg:grid-cols-2 lg:items-start">
             <div>
               <Kicker>REQUEST GUIDANCE</Kicker>
-              <h2 className="mt-3 text-3xl font-extrabold text-gray-900">Tell us your plan 👇</h2>
+              <h2 className="mt-3 text-3xl font-extrabold text-gray-900">Tell us your plan</h2>
               <p className="mt-3 text-gray-600 leading-relaxed">
                 Share your destination and program type. We will contact you with the best guidance.
               </p>
 
               <div className="mt-6 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-                <div className="text-sm font-extrabold text-gray-900">You will receive </div>
+                <div className="text-sm font-extrabold text-gray-900">You will receive</div>
                 <ul className="mt-3 space-y-2 text-sm text-gray-700">
                   {[
                     "A simple preparation checklist",
-                    "Culture & etiquette tips for your destination",
+                    "Culture and etiquette tips for your destination",
                     "Confidence and communication guidance",
                     "Community integration tips",
                   ].map((t) => (
@@ -554,67 +649,31 @@ export default function CultureExchange() {
               </div>
             </div>
 
-            <form
-              ref={formRef}
-              onSubmit={submit}
-              className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm"
-            >
+            <form ref={formRef} onSubmit={submit} className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
               <div className="grid gap-4">
                 <div>
                   <label className="text-xs font-bold text-gray-700">Full Name</label>
-                  <input
-                    name="fullName"
-                    value={form.fullName}
-                    onChange={onChange}
-                    required
-                    className={inputBase}
-                    placeholder="Your name"
-                  />
+                  <input name="fullName" value={form.fullName} onChange={onChange} required className={inputBase} placeholder="Your name" />
                 </div>
 
                 <div>
                   <label className="text-xs font-bold text-gray-700">Email</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={form.email}
-                    onChange={onChange}
-                    required
-                    className={inputBase}
-                    placeholder="you@email.com"
-                  />
+                  <input type="email" name="email" value={form.email} onChange={onChange} required className={inputBase} placeholder="you@email.com" />
                 </div>
 
                 <div>
                   <label className="text-xs font-bold text-gray-700">Phone / WhatsApp</label>
-                  <input
-                    name="phone"
-                    value={form.phone}
-                    onChange={onChange}
-                    className={inputBase}
-                    placeholder="+250..."
-                  />
+                  <input name="phone" value={form.phone} onChange={onChange} className={inputBase} placeholder="+250..." />
                 </div>
 
                 <div>
                   <label className="text-xs font-bold text-gray-700">Destination (optional)</label>
-                  <input
-                    name="destination"
-                    value={form.destination}
-                    onChange={onChange}
-                    className={inputBase}
-                    placeholder="Canada, UK, Germany..."
-                  />
+                  <input name="destination" value={form.destination} onChange={onChange} className={inputBase} placeholder="Canada, UK, Germany..." />
                 </div>
 
                 <div>
                   <label className="text-xs font-bold text-gray-700">Program Type (optional)</label>
-                  <select
-                    name="programType"
-                    value={form.programType}
-                    onChange={onChange}
-                    className={`${inputBase} bg-white`}
-                  >
+                  <select name="programType" value={form.programType} onChange={onChange} className={`${inputBase} bg-white`}>
                     <option value="">Select type...</option>
                     <option value="Student Exchange">Student Exchange</option>
                     <option value="Work / Internship">Work / Internship</option>
@@ -625,14 +684,7 @@ export default function CultureExchange() {
 
                 <div>
                   <label className="text-xs font-bold text-gray-700">Message (optional)</label>
-                  <textarea
-                    name="message"
-                    value={form.message}
-                    onChange={onChange}
-                    rows={4}
-                    className={inputBase}
-                    placeholder="Tell us your concerns, timeline, and goals..."
-                  />
+                  <textarea name="message" value={form.message} onChange={onChange} rows={4} className={inputBase} placeholder="Tell us your concerns, timeline, and goals..." />
                 </div>
 
                 <button
@@ -640,7 +692,7 @@ export default function CultureExchange() {
                   className="mt-2 rounded-xl px-6 py-3 text-sm font-semibold text-white shadow transition active:scale-[0.98]"
                   style={{ backgroundColor: BRAND.primary }}
                 >
-                  Submit Request 
+                  Submit Request
                 </button>
 
                 <div className="text-xs text-gray-500">

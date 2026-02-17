@@ -12,6 +12,22 @@ import EnglishProficiency from "../pages/services/EnglishProficiency";
 import EnglishTestsDashboard from "../pages/services/EnglishTestsDashboard";
 import CareerGuidance from "../pages/services/CareerGuidance";
 import CareerBookMeeting from "../pages/services/CareerBookMeeting";
+import Contact from "../pages/Contact";
+import Appointments from "../pages/how-it-works/Appointments";
+import Testimonials from "../pages/Testimonials";
+import CompanyTeam from "../pages/CompanyTeam";
+import CompanyPartners from "../pages/company/CompanyPartners";
+import PartnershipRequest from "../pages/company/PartnershipRequest";
+import ResourcesBlog from "../pages/resources/ResourcesBlog";
+import ScholarshipTips from "../pages/resources/ScholarshipTips";
+import CountryGuides from "../pages/resources/CountryGuides";
+import UniversityFinder from "../pages/resources/UniversityFinder";
+import FAQ from "../pages/FAQ";
+import HowItWorks from "../pages/how-it-works/HowItWorks";
+import Quotation from "../pages/how-it-works/Quotation";
+import PaymentInvoice from "../pages/how-it-works/PaymentInvoice";
+import Tracking from "../pages/how-it-works/Tracking";
+import TechnicalSupport from "../pages/services/TechnicalSupport";
 
 export default function AppRoutes() {
   return (
@@ -19,7 +35,22 @@ export default function AppRoutes() {
       <Route element={<Layout />}>
         <Route index element={<Home />} />
         <Route path="about" element={<AboutUs />} />
-
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/how-it-works/appointments" element={<Appointments />} />
+        <Route path="/testimonials" element={<Testimonials/>}/>
+        <Route path="/companyTeam"element={<CompanyTeam/>}/>
+        <Route path="/company/partners"element={<CompanyPartners/>}/>
+        <Route path="/company/partners/request"element={<PartnershipRequest/>}/>
+        <Route path="/resources/blog" element={<ResourcesBlog />} />
+        <Route path="/resources/scholarships" element={<ScholarshipTips />} />
+        <Route path="/resources/countries" element={<CountryGuides />} />
+        <Route path="/resources/university-finder" element={<UniversityFinder />} />
+        <Route path="/faq" element={<FAQ />} />
+        <Route path="/how-it-works" element={<HowItWorks />} />
+        <Route path="/how-it-works/quotation" element={<Quotation />} />
+        <Route path="/how-it-works/payment" element={<PaymentInvoice />} />
+        <Route path="/how-it-works/appointments" element={<Appointments />} />
+        <Route path="/how-it-works/tracking" element={<Tracking />} />
         {/* ✅ Study Abroad page */}
         <Route
           path="services/study-abroad/university"
@@ -34,6 +65,7 @@ export default function AppRoutes() {
         <Route path="services/english-tests/dashboard" element={<EnglishTestsDashboard />} />
         <Route path="services/Career" element={<CareerGuidance />} />
         <Route path="services/Career/book-meeting" element={<CareerBookMeeting />} />
+        <Route path="services/technical"element={<TechnicalSupport/>}/>
       </Route>
     </Routes>
   );

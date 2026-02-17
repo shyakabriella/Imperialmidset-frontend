@@ -89,7 +89,7 @@ export default function CareerBookMeeting() {
               BOOK MEETING
             </div>
             <h1 className="mt-3 text-3xl font-extrabold text-gray-900">
-              Choose a date and time 📅
+              Choose a date and time 
             </h1>
             <p className="mt-3 text-gray-600 leading-relaxed">
               After you submit, you can contact the agent through WhatsApp or Email.

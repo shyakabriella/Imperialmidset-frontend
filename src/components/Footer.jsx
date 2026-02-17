@@ -43,12 +43,44 @@ export default function Footer() {
             Trusted by students worldwide
           </h3>
 
+          {/* ✅ Link the “trusted by” items to related services */}
           <div className="mt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-white/60 px-2">
-            <span className="text-lg font-semibold">University Partners</span>
-            <span className="text-lg font-semibold">Academic Loan</span>
-            <span className="text-lg font-semibold">Visa Guidance</span>
-            <span className="text-lg font-semibold">Global Network</span>
-            <span className="text-lg font-semibold">Student Community</span>
+            <Link
+              to="/services/study-abroad/university"
+              className="text-lg font-semibold hover:text-white transition"
+            >
+              University Partners
+            </Link>
+
+            {/* No loan route yet → send to contact */}
+            <Link
+              to="/contact"
+              className="text-lg font-semibold hover:text-white transition"
+            >
+              Academic Loan
+            </Link>
+
+            <Link
+              to="/services/Visa"
+              className="text-lg font-semibold hover:text-white transition"
+            >
+              Visa Guidance
+            </Link>
+
+            {/* No networking route yet → send to contact */}
+            <Link
+              to="/contact"
+              className="text-lg font-semibold hover:text-white transition"
+            >
+              Global Network
+            </Link>
+
+            <Link
+              to="/services/Culture_exchange"
+              className="text-lg font-semibold hover:text-white transition"
+            >
+              Student Community
+            </Link>
           </div>
         </div>
 
@@ -71,16 +103,27 @@ export default function Footer() {
                   About Us
                 </Link>
               </li>
+
+              {/* You don’t have /services route in AppRoutes → use the real service page */}
               <li>
-                <Link to="/services" className="hover:text-white transition">
+                <Link
+                  to="/services/study-abroad/university"
+                  className="hover:text-white transition"
+                >
                   Services
                 </Link>
               </li>
+
+              {/* No /partners route yet → send to study-abroad page or contact */}
               <li>
-                <Link to="/partners" className="hover:text-white transition">
+                <Link
+                  to="/services/study-abroad/university"
+                  className="hover:text-white transition"
+                >
                   Partner Universities
                 </Link>
               </li>
+
               <li>
                 <Link to="/contact" className="hover:text-white transition">
                   Contact
@@ -93,18 +136,29 @@ export default function Footer() {
           <div className="min-w-0">
             <h4 className="text-sm font-bold text-white">Programs</h4>
             <ul className="mt-4 space-y-3 text-sm text-slate-300 break-words">
+              {/* No /programs/bachelor route → send to study abroad */}
               <li>
-                <Link to="/programs/bachelor" className="hover:text-white transition">
+                <Link
+                  to="/services/study-abroad/university"
+                  className="hover:text-white transition"
+                >
                   Undergraduate
                 </Link>
               </li>
+
+              {/* No /programs/masters route → send to study abroad */}
               <li>
-                <Link to="/programs/masters" className="hover:text-white transition">
+                <Link
+                  to="/services/study-abroad/university"
+                  className="hover:text-white transition"
+                >
                   Postgraduate / Masters, PhD
                 </Link>
               </li>
+
+              {/* No /scholarships route → send to contact */}
               <li>
-                <Link to="/scholarships" className="hover:text-white transition">
+                <Link to="/contact" className="hover:text-white transition">
                   Academic Loan
                 </Link>
               </li>
@@ -115,23 +169,24 @@ export default function Footer() {
           <div className="min-w-0">
             <h4 className="text-sm font-bold text-white">Legal</h4>
             <ul className="mt-4 space-y-3 text-sm text-slate-300 break-words">
+              {/* No legal routes yet → send to contact for now */}
               <li>
-                <Link to="/terms" className="hover:text-white transition">
+                <Link to="/contact" className="hover:text-white transition">
                   Terms
                 </Link>
               </li>
               <li>
-                <Link to="/privacy" className="hover:text-white transition">
+                <Link to="/contact" className="hover:text-white transition">
                   Privacy
                 </Link>
               </li>
               <li>
-                <Link to="/refund" className="hover:text-white transition">
+                <Link to="/contact" className="hover:text-white transition">
                   Refund Policy
                 </Link>
               </li>
               <li>
-                <Link to="/cookies" className="hover:text-white transition">
+                <Link to="/contact" className="hover:text-white transition">
                   Cookies
                 </Link>
               </li>
@@ -142,7 +197,8 @@ export default function Footer() {
           <div className="min-w-0">
             <h4 className="text-sm font-bold text-white">Subscribe</h4>
             <p className="mt-4 text-sm text-slate-300 leading-relaxed">
-              Get updates about new Academic Loans, application deadlines, and upcoming info sessions.
+              Get updates about new Academic Loans, application deadlines, and
+              upcoming info sessions.
             </p>
 
             {/* ✅ FIXED: prevent flex overflow */}
@@ -159,11 +215,33 @@ export default function Footer() {
 
             <p className="mt-3 text-xs text-slate-400">
               By subscribing, you agree to our{" "}
-              <Link to="/terms" className="underline hover:text-white transition">
+              <Link to="/contact" className="underline hover:text-white transition">
                 Terms & Conditions
               </Link>
               .
             </p>
+
+            {/* ✅ Helpful quick links */}
+            <div className="mt-5 flex flex-wrap gap-2 text-xs">
+              <Link
+                to="/how-it-works/appointments"
+                className="rounded-full bg-white/5 px-3 py-1.5 ring-1 ring-white/10 hover:bg-white/10 transition"
+              >
+                Book Appointment
+              </Link>
+              <Link
+                to="/services/Visa"
+                className="rounded-full bg-white/5 px-3 py-1.5 ring-1 ring-white/10 hover:bg-white/10 transition"
+              >
+                Visa Support
+              </Link>
+              <Link
+                to="/services/english-tests"
+                className="rounded-full bg-white/5 px-3 py-1.5 ring-1 ring-white/10 hover:bg-white/10 transition"
+              >
+                English Tests
+              </Link>
+            </div>
           </div>
         </div>
 
@@ -171,7 +249,8 @@ export default function Footer() {
 
         {/* BOTTOM */}
         <div className="py-6 text-center text-xs text-slate-400">
-          © {new Date().getFullYear()} International Mindset PathWays. All rights reserved.
+          © {new Date().getFullYear()} International Mindset PathWays. All rights
+          reserved.
         </div>
       </div>
     </footer>

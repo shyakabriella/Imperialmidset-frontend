@@ -145,7 +145,7 @@ export default function CareerGuidance() {
                 className="rounded-xl px-6 py-3 text-sm font-semibold text-white shadow transition active:scale-[0.98]"
                 style={{ backgroundColor: BRAND.primary }}
               >
-                Book a Meeting Now 📅
+                Book a Meeting Now 
               </button>
 
               <button
@@ -194,7 +194,7 @@ export default function CareerGuidance() {
                 className="rounded-xl border bg-white px-6 py-3 text-sm font-semibold shadow-sm hover:bg-gray-50 transition"
                 style={{ borderColor: "rgba(47,13,52,0.22)", color: BRAND.primary }}
               >
-                Book a Meeting 📅
+                Book a Meeting 
               </button>
             </div>
           </div>
@@ -300,7 +300,7 @@ export default function CareerGuidance() {
               <div className="text-xs font-bold tracking-widest" style={{ color: BRAND.primary }}>
                 FREE CAREER ASSESSMENT
               </div>
-              <h2 className="mt-3 text-3xl font-extrabold text-gray-900">Tell us your goal 👇</h2>
+              <h2 className="mt-3 text-3xl font-extrabold text-gray-900">Tell us your goal </h2>
               <p className="mt-3 text-gray-600 leading-relaxed">
                 Submit your details and we’ll guide your next steps (direction, CV, skills, interviews, job strategy).
               </p>

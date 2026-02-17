@@ -164,6 +164,34 @@ function SectionTitle({ kicker, title, desc }) {
   );
 }
 
+/* ---------------- Upload helpers ---------------- */
+const ACCEPTED_EXTS = [".pdf", ".doc", ".docx", ".jpg", ".jpeg", ".png"];
+const ACCEPT_ATTR =
+  "application/pdf,.pdf,application/msword,.doc,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.docx,image/jpeg,image/png,.jpg,.jpeg,.png";
+
+const MAX_FILE_MB = 10; // per file
+const MAX_TOTAL_MB = 25; // total (nice limit)
+
+function bytesToMB(bytes) {
+  return bytes / (1024 * 1024);
+}
+
+function prettySize(bytes) {
+  const mb = bytesToMB(bytes);
+  if (mb < 1) return `${Math.round(bytes / 1024)} KB`;
+  return `${mb.toFixed(1)} MB`;
+}
+
+function fileExt(name = "") {
+  const i = name.lastIndexOf(".");
+  return i >= 0 ? name.slice(i).toLowerCase() : "";
+}
+
+function isAllowedFile(file) {
+  const ext = fileExt(file.name);
+  return ACCEPTED_EXTS.includes(ext);
+}
+
 export default function StudyAbroadUniversity() {
   const navigate = useNavigate();
   const { ref, inView } = useInView();
@@ -193,6 +221,7 @@ export default function StudyAbroadUniversity() {
     faculty: "",
     otherFaculty: "",
     intake: "",
+    notes: "",
   });
 
   const facultyFinal =
@@ -230,26 +259,19 @@ export default function StudyAbroadUniversity() {
   const validateRequired = () => {
     const nextErrors = { level: "", intake: "", faculty: "", country: "" };
 
-    // Level required (state default is undergrad, but we still validate)
     if (!level) nextErrors.level = "Please choose a level (Undergraduate or Postgraduate).";
-
-    // Intake required
     if (!form.intake) nextErrors.intake = "Please select an intake (Spring, Summer, or Fall).";
 
-    // Faculty required (and Other requires otherFaculty)
     if (!form.faculty) {
       nextErrors.faculty = "Please select a faculty.";
     } else if (form.faculty === "Other" && !form.otherFaculty.trim()) {
       nextErrors.faculty = "Please specify your faculty (because you selected Other).";
     }
 
-    // Country required
     if (!form.country.trim()) nextErrors.country = "Please enter your preferred country.";
 
-    // Set errors
     setErrors(nextErrors);
 
-    // Scroll to first error in page order
     if (nextErrors.level) {
       scrollTo(levelRef);
       return false;
@@ -266,21 +288,6 @@ export default function StudyAbroadUniversity() {
     return true;
   };
 
-  const submit = (e) => {
-    e.preventDefault();
-
-    if (!validateRequired()) return;
-
-    const payload = {
-      level,
-      ...form,
-      faculty: facultyFinal,
-    };
-
-    console.log("Study Abroad Inquiry:", payload);
-    alert("✅ Thanks! We received your request. We will contact you soon.");
-  };
-
   const scrollToAssessment = () => {
     document.getElementById("assessment")?.scrollIntoView({ behavior: "smooth" });
   };
@@ -289,8 +296,91 @@ export default function StudyAbroadUniversity() {
     "mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[rgba(47,13,52,0.18)]";
   const errorText = "mt-2 text-xs font-semibold text-red-600";
 
+  /* ---------------- Document upload state ---------------- */
+  const fileInputRef = React.useRef(null);
+  const [dragOver, setDragOver] = React.useState(false);
+  const [docError, setDocError] = React.useState("");
+  const [docs, setDocs] = React.useState([]); // File[]
+  const totalBytes = React.useMemo(() => docs.reduce((s, f) => s + (f?.size || 0), 0), [docs]);
+
+  const addFiles = (fileList) => {
+    const incoming = Array.from(fileList || []);
+    if (incoming.length === 0) return;
+
+    setDocError("");
+
+    // validate + filter duplicates
+    const next = [];
+    const current = docs;
+
+    for (const f of incoming) {
+      if (!isAllowedFile(f)) {
+        setDocError(`Unsupported file "${f.name}". Allowed: PDF, DOC, DOCX, JPG, PNG.`);
+        continue;
+      }
+      if (bytesToMB(f.size) > MAX_FILE_MB) {
+        setDocError(`"${f.name}" is too large. Max ${MAX_FILE_MB}MB per file.`);
+        continue;
+      }
+
+      const duplicate = current.some(
+        (x) =>
+          x.name === f.name &&
+          x.size === f.size &&
+          x.lastModified === f.lastModified
+      );
+      if (!duplicate) next.push(f);
+    }
+
+    const newTotalBytes = totalBytes + next.reduce((s, f) => s + f.size, 0);
+    if (bytesToMB(newTotalBytes) > MAX_TOTAL_MB) {
+      setDocError(`Total upload is too large. Max ${MAX_TOTAL_MB}MB total.`);
+      return;
+    }
+
+    if (next.length) setDocs((prev) => [...prev, ...next]);
+  };
+
+  const onPickFiles = (e) => {
+    addFiles(e.target.files);
+    // allow selecting the same file again if removed
+    e.target.value = "";
+  };
+
+  const removeFile = (idx) => {
+    setDocs((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  const submit = async (e) => {
+    e.preventDefault();
+
+    if (!validateRequired()) return;
+
+    const payload = {
+      level,
+      ...form,
+      faculty: facultyFinal,
+      intake: form.intake,
+    };
+
+    // ✅ Ready for backend upload (FormData supports files)
+    const fd = new FormData();
+    fd.append("payload", JSON.stringify(payload));
+    docs.forEach((file) => fd.append("documents", file));
+
+    console.log("Study Abroad Inquiry:", payload);
+    console.log("Documents:", docs);
+
+    // ✅ If you have an API endpoint, enable this:
+    // await fetch("/api/study-abroad", { method: "POST", body: fd });
+
+    alert(
+      `✅ Thanks! We received your request.\n\nUploaded documents: ${docs.length}\nWe will contact you soon.`
+    );
+  };
+
   return (
-    <div className="bg-white">
+    <div className="bg-white relative">
       {/* Soft background */}
       <div
         className="absolute left-0 right-0 top-0 -z-10 h-[520px]"
@@ -324,7 +414,7 @@ export default function StudyAbroadUniversity() {
             ].join(" ")}
           >
             <div className="inline-flex items-center gap-2 rounded-full bg-white/70 backdrop-blur px-4 py-2 text-xs font-bold text-gray-700 ring-1 ring-black/5 shadow-sm">
-              🎓 Study Abroad Support
+               Study Abroad Support
               <span className="h-1 w-1 rounded-full bg-gray-400" />
               Undergraduate & Postgraduate
             </div>
@@ -383,22 +473,23 @@ export default function StudyAbroadUniversity() {
             style={{ transitionDelay: "120ms" }}
           >
             <img
-              src="/gigi.png"
+              src="/abroad.jpg"
               alt="Study abroad"
               className="absolute inset-0 h-full w-full object-cover"
             />
             <div className="absolute inset-0 bg-black/15" />
 
             <div className="absolute left-5 top-5 rounded-2xl bg-white/90 backdrop-blur px-4 py-2 text-xs font-bold text-gray-900 shadow ring-1 ring-black/5">
-              International Mindset PathWays
+              Your pathway to success
             </div>
 
-            <div className="absolute bottom-5 left-5 right-5 rounded-2xl bg-white/90 backdrop-blur p-4 shadow ring-1 ring-black/5">
-              <div className="text-sm font-extrabold text-gray-900">What you get ✅</div>
+            {/* <div className="absolute bottom-5 left-5 right-5 rounded-2xl bg-white/90 backdrop-blur p-4 shadow ring-1 ring-black/5">
+              <div className="text-sm font-extrabold text-gray-900">What you get </div>
               <div className="mt-1 text-xs text-gray-600">
                 Matching • Documents • Application • Visa Guidance • Travel Support
               </div>
-            </div>
+            </div> */}
+            
           </div>
         </div>
       </section>
@@ -594,7 +685,7 @@ export default function StudyAbroadUniversity() {
               DESTINATIONS
             </div>
             <h3 className="mt-2 text-2xl font-extrabold text-gray-900">
-              Popular study destinations 
+              Popular study destinations
             </h3>
             <p className="mt-2 text-sm text-gray-600">
               We guide you based on your budget, visa rules, and your goals.
@@ -633,7 +724,8 @@ export default function StudyAbroadUniversity() {
               </div>
               <h2 className="mt-3 text-3xl font-extrabold text-gray-900">Tell us about you 👇</h2>
               <p className="mt-3 text-gray-600 leading-relaxed">
-                Share basic details and we’ll contact you with a shortlist of universities and next steps.
+                Share basic details and upload documents (optional). We’ll contact you with a shortlist
+                of universities and next steps.
               </p>
 
               <div className="mt-6 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
@@ -643,6 +735,12 @@ export default function StudyAbroadUniversity() {
                 </div>
                 <div className="mt-2 text-sm text-gray-700">
                   🗓️ Intake: <span className="font-semibold">{form.intake || "Not selected"}</span>
+                </div>
+                <div className="mt-2 text-sm text-gray-700">
+                  📎 Documents:{" "}
+                  <span className="font-semibold">
+                    {docs.length ? `${docs.length} file(s)` : "None uploaded"}
+                  </span>
                 </div>
               </div>
             </div>
@@ -744,6 +842,139 @@ export default function StudyAbroadUniversity() {
                   {errors.country ? <div className={errorText}>{errors.country}</div> : null}
                 </div>
 
+                {/* Notes (optional) */}
+                <div>
+                  <label className="text-xs font-bold text-gray-700">Extra Notes (optional)</label>
+                  <textarea
+                    name="notes"
+                    value={form.notes}
+                    onChange={onChange}
+                    rows={3}
+                    className={`${inputBase} border-gray-300 resize-none`}
+                    placeholder="Anything important? Budget, city preference, scholarship need, deadlines..."
+                  />
+                </div>
+
+                {/* ✅ DOCUMENT UPLOAD (optional) */}
+                <div className="rounded-2xl border border-gray-200 bg-white p-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <div className="text-xs font-bold tracking-widest" style={{ color: BRAND.primary }}>
+                        DOCUMENT UPLOAD (Optional)
+                      </div>
+                      <div className="mt-1 text-sm font-extrabold text-gray-900">
+                        Upload your documents 📎
+                      </div>
+                      <div className="mt-1 text-xs text-gray-600">
+                        PDF, DOC, DOCX, JPG, PNG • Max {MAX_FILE_MB}MB each • Max {MAX_TOTAL_MB}MB total
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="shrink-0 rounded-xl px-4 py-2 text-xs font-bold text-white shadow transition active:scale-[0.98]"
+                      style={{ backgroundColor: BRAND.primary }}
+                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#250A28")}
+                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = BRAND.primary)}
+                    >
+                      Browse
+                    </button>
+
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      multiple
+                      accept={ACCEPT_ATTR}
+                      className="hidden"
+                      onChange={onPickFiles}
+                    />
+                  </div>
+
+                  {/* Dropzone */}
+                  <div
+                    onDragEnter={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setDragOver(true);
+                    }}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setDragOver(true);
+                    }}
+                    onDragLeave={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setDragOver(false);
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setDragOver(false);
+                      addFiles(e.dataTransfer.files);
+                    }}
+                    className={[
+                      "mt-4 rounded-2xl border-2 border-dashed p-4 transition",
+                      dragOver ? "bg-gray-50 border-gray-400" : "bg-white border-gray-200",
+                    ].join(" ")}
+                  >
+                    <div className="text-center">
+                      <div className="text-sm font-semibold text-gray-900">
+                        Drag & drop files here
+                      </div>
+                      <div className="mt-1 text-xs text-gray-500">
+                        Or click <span className="font-semibold">Browse</span> to select files
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Errors */}
+                  {docError ? <div className="mt-3 text-xs font-semibold text-red-600">{docError}</div> : null}
+
+                  {/* Selected files */}
+                  <div className="mt-4">
+                    {docs.length === 0 ? (
+                      <div className="text-xs text-gray-500">
+                        No files selected yet.
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between text-xs text-gray-600">
+                          <span>
+                            Selected: <span className="font-semibold text-gray-900">{docs.length}</span>
+                          </span>
+                          <span>
+                            Total: <span className="font-semibold text-gray-900">{prettySize(totalBytes)}</span>
+                          </span>
+                        </div>
+
+                        <ul className="space-y-2">
+                          {docs.map((f, idx) => (
+                            <li
+                              key={`${f.name}-${f.size}-${f.lastModified}`}
+                              className="flex items-center justify-between gap-3 rounded-xl bg-gray-50 px-3 py-2 ring-1 ring-black/5"
+                            >
+                              <div className="min-w-0">
+                                <div className="truncate text-xs font-bold text-gray-900">{f.name}</div>
+                                <div className="text-[11px] text-gray-600">{prettySize(f.size)}</div>
+                              </div>
+
+                              <button
+                                type="button"
+                                onClick={() => removeFile(idx)}
+                                className="rounded-lg px-3 py-1 text-[11px] font-bold text-gray-900 bg-white ring-1 ring-black/10 hover:bg-gray-100 transition active:scale-95"
+                              >
+                                Remove
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
                 <button
                   type="submit"
                   className="mt-2 rounded-xl px-6 py-3 text-sm font-semibold text-white shadow transition active:scale-[0.98]"
@@ -754,7 +985,7 @@ export default function StudyAbroadUniversity() {
                   Submit Assessment
                 </button>
 
-                <div className="text-xs text-gray-500">
+                <div className="text-base text-gray-500">
                   By submitting, you agree we may contact you for follow-up about your request.
                 </div>
               </div>

@@ -141,14 +141,14 @@ export default function AboutUs() {
             {/* ✅ CTA buttons that route */}
             <div className="mt-8 flex flex-wrap gap-3">
               <button
-                onClick={() => navigate("/booking")}
+                onClick={() => navigate("/how-it-works/appointments")}
                 className="rounded-xl bg-gray-900 px-6 py-3 text-sm font-semibold text-white shadow hover:bg-gray-800 transition active:scale-[0.98]"
               >
                 Book a Consultation
               </button>
 
               <button
-                onClick={() => navigate("/services")}
+                onClick={() => navigate("/services/study-abroad/university")}
                 className="rounded-xl border border-gray-300 bg-white px-6 py-3 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50 transition active:scale-[0.98]"
               >
                 Explore Services

@@ -34,7 +34,7 @@ const MENU = [
       { label: "Air Ticketing", to: "/services/Air_ticket", icon: BadgeDollarSign },
       { label: "English Proficiency (Duolingo/IELTS)", to: "/services/english-tests", icon: Award },
       { label: "Technical Support (Coding)", to: "/services/technical", icon: MonitorCog },
-      { label: "Internship Support", to: "/services/internship", icon: Users },
+      // { label: "Internship Support", to: "/services/internship", icon: Users },
       { label: "Career Guidance", to: "/services/Career", icon: Star },
     ],
   },
@@ -61,16 +61,17 @@ const MENU = [
     ],
   },
   {
-    label: "Company",
-    icon: Building2,
-    items: [
-      { label: "About Us", to: "/company/about", icon: Info },
-      { label: "Our Team", to: "/company/team", icon: Users },
-      { label: "Partners", to: "/company/partners", icon: Network },
-      { label: "Testimonials", to: "/company/testimonials", icon: Star },
-      { label: "Contact", to: "/contact", icon: Phone },
-    ],
-  },
+  label: "Company",
+  icon: Building2,
+  items: [
+    { label: "About Us", to: "/about", icon: Info },            
+    { label: "Our Team", to: "/companyTeam", icon: Users },    
+    { label: "Partners", to: "/company/Partners", icon: Network }, 
+    //  { label: "Partner With Us", to: "/company/partners/request", icon: Network },
+    { label: "Testimonials", to: "/testimonials", icon: Star }, 
+    { label: "Contact", to: "/contact", icon: Phone },         
+  ],
+},
 ];
 
 function Chevron({ open }) {

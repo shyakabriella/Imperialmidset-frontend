@@ -4,8 +4,7 @@ export const ENGLISH_TEACHERS = [
     id: "t1",
     name: "Ms. Aline Mukamana",
     title: "IELTS Coach • Academic & General",
-    photo:
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=900&q=80",
+    photo: "/teachers/teacher-2.jpg",
     highlights: [
       "Speaking & Writing strategies",
       "Band score improvement plans",
@@ -15,10 +14,9 @@ export const ENGLISH_TEACHERS = [
   },
   {
     id: "t2",
-    name: "Mr. David Johnson",
+    name: "Teacher Luke",
     title: "Duolingo English Test Trainer",
-    photo:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80",
+    photo: "/teachers/teacher.jpg",
     highlights: [
       "DET test format mastery",
       "Time management coaching",
@@ -28,10 +26,9 @@ export const ENGLISH_TEACHERS = [
   },
   {
     id: "t3",
-    name: "Ms. Grace Uwase",
+    name: "Mr Shyaka Samuel",
     title: "English Proficiency Mentor",
-    photo:
-      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80",
+    photo: "/teachers/Shyaka.jpg",
     highlights: [
       "Grammar & vocabulary building",
       "Confidence & fluency sessions",

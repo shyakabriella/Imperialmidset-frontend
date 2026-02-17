@@ -149,7 +149,7 @@ export default function CultureEventApply() {
               <div className="text-xs font-bold tracking-widest" style={{ color: BRAND.primary }}>
                 APPLICATION FORM
               </div>
-              <h2 className="mt-2 text-2xl font-extrabold text-gray-900">Your details 👇</h2>
+              <h2 className="mt-2 text-2xl font-extrabold text-gray-900">Your details </h2>
               <p className="mt-2 text-sm text-gray-600">
                 Required fields: passport number, full name, country, phone, email.
               </p>
@@ -308,7 +308,7 @@ export default function CultureEventApply() {
                     className="flex-1 rounded-xl px-6 py-3 text-sm font-semibold text-white shadow transition active:scale-[0.98]"
                     style={{ backgroundColor: BRAND.primary }}
                   >
-                    Submit Application ✅
+                    Submit Application 
                   </button>
 
                   <Link

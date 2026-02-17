@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 function useInView(options = { threshold: 0.15 }) {
   const ref = React.useRef(null);
@@ -50,6 +51,7 @@ const ITEMS = [
     meta: "Undergraduate • 100+ Partner Schools",
     cta: "START HERE",
     img: "/opportunities/bachelor.jpg",
+    route: "/services/study-abroad/university",
   },
   {
     level: "Master’s • Scholarships Guidance",
@@ -59,6 +61,7 @@ const ITEMS = [
     meta: "Master’s • Scholarship Opportunities",
     cta: "APPLY NOW",
     img: "/opportunities/masters.jpg",
+    route: "/services/study-abroad/university",
   },
   {
     level: "PhD • Research Matching",
@@ -68,8 +71,8 @@ const ITEMS = [
     meta: "PhD • Research & Proposal Support",
     cta: "GET MATCHED",
     img: "/opportunities/phd.jpg",
+    route: "/services/study-abroad/university",
   },
-  
   {
     level: "Visa • Travel • Settling",
     title: "Visa & Pre-Departure Support",
@@ -78,6 +81,7 @@ const ITEMS = [
     meta: "Visa • Housing • Arrival Help",
     cta: "GET HELP",
     img: "/opportunities/visa.jpg",
+    route: "/services/Visa",
   },
   {
     level: "Study Loan • Academic Financing",
@@ -87,6 +91,8 @@ const ITEMS = [
     meta: "Loan Support • Eligibility • Documentation",
     cta: "CHECK ELIGIBILITY",
     img: "/opportunities/study-loan.jpg",
+    // ✅ No route yet in your AppRoutes → send to Contact (or create /services/study-loan later)
+    route: "/contact",
   },
   {
     level: "Culture Exchange • Global Experience",
@@ -96,6 +102,7 @@ const ITEMS = [
     meta: "Exchange • Travel • Community",
     cta: "EXPLORE OPTIONS",
     img: "/opportunities/culture-exchange.jpg",
+    route: "/services/Culture_exchange",
   },
   {
     level: "Global Networking • Connections",
@@ -105,11 +112,14 @@ const ITEMS = [
     meta: "Networking • Mentorship • Global Community",
     cta: "JOIN NETWORK",
     img: "/opportunities/global-networking.jpg",
+    // ✅ No route yet → send to Contact for now
+    route: "/contact",
   },
 ];
 
 export default function ExploreOpportunities() {
   const { ref, inView } = useInView();
+  const navigate = useNavigate();
 
   return (
     <section ref={ref} className="bg-white py-16 sm:py-20">
@@ -159,21 +169,19 @@ export default function ExploreOpportunities() {
 
               {/* Content */}
               <div className="p-6">
-                <div className="text-xs font-semibold text-gray-500">
-                  {c.level}
-                </div>
+                <div className="text-xs font-semibold text-gray-500">{c.level}</div>
 
-                <h3 className="mt-2 text-lg font-extrabold text-gray-900">
-                  {c.title}
-                </h3>
+                <h3 className="mt-2 text-lg font-extrabold text-gray-900">{c.title}</h3>
 
-                <p className="mt-2 text-sm leading-relaxed text-gray-600">
-                  {c.desc}
-                </p>
+                <p className="mt-2 text-sm leading-relaxed text-gray-600">{c.desc}</p>
 
                 <div className="mt-4 text-xs text-gray-500">{c.meta}</div>
 
-                <button className="mt-5 inline-flex items-center rounded-xl border border-gray-300 bg-white px-4 py-2 text-xs font-bold text-gray-900 shadow-sm transition hover:bg-gray-50 active:scale-[0.98]">
+                {/* ✅ Link to related service */}
+                <button
+                  onClick={() => navigate(c.route)}
+                  className="mt-5 inline-flex items-center rounded-xl border border-gray-300 bg-white px-4 py-2 text-xs font-bold text-gray-900 shadow-sm transition hover:bg-gray-50 active:scale-[0.98]"
+                >
                   {c.cta}
                 </button>
               </div>

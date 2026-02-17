@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 function useInView(options = { threshold: 0.15 }) {
   const ref = React.useRef(null);
@@ -22,39 +23,55 @@ function useInView(options = { threshold: 0.15 }) {
   return { ref, inView };
 }
 
+/**
+ * ✅ Each item now has a `route` (where to go)
+ * We send them to your Culture Events page.
+ * We also include `q` (optional) which you can use later to filter or highlight.
+ */
 const EVENTS = [
   {
     title: "Study Abroad Info Session: Programs & Requirements",
     desc:
       "Learn how to choose the right university abroad, understand requirements, and avoid common mistakes.",
-    cta: "REGISTER FOR FREE",
+    cta: "VIEW ON EVENTS PAGE",
     img: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1600&q=80",
+    route: "/services/Culture_exchange/events?q=study-abroad",
   },
   {
     title: "Application Workshop: SOP, CV & Documents",
     desc:
       "A practical session to help you write a strong SOP, prepare your CV, and organize your documents correctly.",
-    cta: "REGISTER FOR FREE",
+    cta: "VIEW ON EVENTS PAGE",
     img: "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1600&q=80",
+    route: "/services/Culture_exchange/events?q=application-workshop",
   },
   {
     title: "Scholarships & Funding: How to Improve Your Chances",
     desc:
       "We share scholarship strategies, how to search the right funding, and how to write strong applications.",
-    cta: "GET TICKET",
+    cta: "VIEW ON EVENTS PAGE",
     img: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1600&q=80",
+    route: "/services/Culture_exchange/events?q=scholarships",
   },
   {
     title: "Visa & Pre-Departure: What You Must Prepare",
     desc:
       "Understand visa steps, interview preparation, and what to do after you receive an acceptance letter.",
-    cta: "GET TICKET",
+    cta: "VIEW ON EVENTS PAGE",
     img: "https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=1600&q=80",
+    route: "/services/Culture_exchange/events?q=visa-predeparture",
   },
 ];
 
 export default function UpcomingEvents() {
   const { ref, inView } = useInView();
+  const navigate = useNavigate();
+
+  const goToEventsPage = (route) => {
+    navigate(route);
+    // nice UX: scroll to top after navigation
+    setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 50);
+  };
 
   return (
     <section ref={ref} className="bg-white py-16 sm:py-20">
@@ -73,6 +90,17 @@ export default function UpcomingEvents() {
             Join our live sessions designed to guide students worldwide on how to
             apply and join schools & universities abroad.
           </p>
+
+          {/* ✅ "View all events" button */}
+          <div className="mt-6 flex justify-center">
+            <button
+              onClick={() => goToEventsPage("/services/Culture_exchange/events")}
+              className="rounded-xl px-6 py-3 text-sm font-semibold text-white shadow transition active:scale-[0.98]"
+              style={{ backgroundColor: "#2F0D34" }}
+            >
+              View All Events
+            </button>
+          </div>
         </div>
 
         {/* Cards */}
@@ -80,20 +108,22 @@ export default function UpcomingEvents() {
           {EVENTS.map((e, idx) => (
             <article
               key={e.title}
+              role="button"
+              tabIndex={0}
+              onClick={() => goToEventsPage(e.route)}
+              onKeyDown={(ev) => {
+                if (ev.key === "Enter" || ev.key === " ") goToEventsPage(e.route);
+              }}
               className={[
-                "rounded-2xl bg-white shadow-md ring-1 ring-black/5 overflow-hidden",
-                "transition-all duration-700 ease-out",
+                "cursor-pointer rounded-2xl bg-white shadow-md ring-1 ring-black/5 overflow-hidden",
+                "transition-all duration-700 ease-out hover:shadow-lg hover:-translate-y-1",
                 inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6",
               ].join(" ")}
               style={{ transitionDelay: `${idx * 120}ms` }}
             >
               {/* Image */}
               <div className="relative h-40">
-                <img
-                  src={e.img}
-                  alt={e.title}
-                  className="h-full w-full object-cover"
-                />
+                <img src={e.img} alt={e.title} className="h-full w-full object-cover" />
                 <div className="absolute inset-0 bg-black/10" />
               </div>
 
@@ -106,7 +136,15 @@ export default function UpcomingEvents() {
                   {e.desc}
                 </p>
 
-                <button className="mt-5 inline-flex items-center rounded-xl bg-gray-900 px-4 py-2 text-xs font-bold text-white shadow transition hover:bg-gray-800 active:scale-[0.98]">
+                <button
+                  type="button"
+                  onClick={(ev) => {
+                    ev.stopPropagation(); // prevent double navigation
+                    goToEventsPage(e.route);
+                  }}
+                  className="mt-5 inline-flex items-center rounded-xl px-4 py-2 text-xs font-bold text-white shadow transition active:scale-[0.98]"
+                  style={{ backgroundColor: "#2F0D34" }}
+                >
                   {e.cta}
                 </button>
               </div>

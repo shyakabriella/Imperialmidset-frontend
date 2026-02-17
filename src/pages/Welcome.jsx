@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const WORDS = [
   "Study Abroad",
@@ -13,6 +14,18 @@ const WORDS = [
 
 // ✅ Always reserve space using the longest word (auto, future-proof)
 const LONGEST_WORD = WORDS.reduce((a, b) => (a.length >= b.length ? a : b), "");
+
+/** ✅ Map each typewriter service to your real route */
+const SERVICE_ROUTES = {
+  "Study Abroad": "/services/study-abroad/university",
+  "Visa Support": "/services/Visa",
+  "Culture Exchange": "/services/Culture_exchange",
+  "Air ticketing": "/services/Air_ticket",
+  "English Proficiency": "/services/english-tests",
+  "Technical Coaching": "/services/technical",
+  "Internship Support": "/services/internship",
+  "Career Guidance": "/services/Career",
+};
 
 function useTypewriter(words, options = {}) {
   const {
@@ -60,15 +73,26 @@ function useTypewriter(words, options = {}) {
 
       return () => clearTimeout(t);
     }
-  }, [text, mode, wordIndex, words, typeSpeed, deleteSpeed, pauseBeforeDelete, pauseBeforeNext]);
+  }, [
+    text,
+    mode,
+    wordIndex,
+    words,
+    typeSpeed,
+    deleteSpeed,
+    pauseBeforeDelete,
+    pauseBeforeNext,
+  ]);
 
-  return { text };
+  // ✅ return wordIndex so buttons know the selected service
+  return { text, wordIndex, currentWord: words[wordIndex] };
 }
 
 export default function Welcome() {
+  const navigate = useNavigate();
   const [show, setShow] = React.useState(false);
 
-  const { text } = useTypewriter(WORDS, {
+  const { text, currentWord } = useTypewriter(WORDS, {
     typeSpeed: 70,
     deleteSpeed: 45,
     pauseBeforeDelete: 900,
@@ -79,6 +103,16 @@ export default function Welcome() {
     const t = setTimeout(() => setShow(true), 80);
     return () => clearTimeout(t);
   }, []);
+
+  const goToCurrentService = () => {
+    const path = SERVICE_ROUTES[currentWord] || "/services";
+    navigate(path, { state: { from: "welcome", selectedService: currentWord } });
+  };
+
+  const bookConsultation = () => {
+    navigate("/how-it-works/appointments");
+    // or: navigate("/contact");
+  };
 
   return (
     <section className="relative min-h-[calc(100vh-120px)] overflow-hidden">
@@ -112,8 +146,6 @@ export default function Welcome() {
               className="absolute inset-0 h-full w-full object-cover transition duration-700 ease-out hover:scale-105"
             />
             <div className="absolute inset-0 bg-black/40" />
-
-            {/* little glow */}
             <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
           </div>
 
@@ -142,19 +174,11 @@ export default function Welcome() {
                 </span>
                 and Unlock{" "}
                 <span className="relative inline-flex items-baseline">
-                  {/* ✅ FIX: typewriter pill reserves width using invisible longest word */}
                   <span className="ml-2 inline-flex items-baseline rounded-xl bg-gray-900 px-3 py-1 text-white shadow whitespace-nowrap leading-none">
                     <span className="relative inline-block align-baseline">
-                      {/* reserve width (never wraps) */}
                       <span className="invisible whitespace-nowrap">{LONGEST_WORD}</span>
-
-                      {/* actual typing text overlays, no layout shift */}
-                      <span className="absolute left-0 top-0 whitespace-nowrap">
-                        {text}
-                      </span>
+                      <span className="absolute left-0 top-0 whitespace-nowrap">{text}</span>
                     </span>
-
-                    {/* cursor */}
                     <span className="ml-0.5 inline-block w-[2px] h-[1.1em] bg-white animate-pulse" />
                   </span>
                 </span>
@@ -204,11 +228,20 @@ export default function Welcome() {
                   show ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0",
                 ].join(" ")}
               >
-                <button className="rounded-xl bg-gray-900 px-6 py-3 text-sm font-semibold text-white shadow transition active:scale-[0.98] hover:bg-gray-800 hover:-translate-y-0.5">
+                {/* ✅ Goes to the currently typed service */}
+                <button
+                  onClick={goToCurrentService}
+                  className="rounded-xl bg-gray-900 px-6 py-3 text-sm font-semibold text-white shadow transition active:scale-[0.98] hover:bg-gray-800 hover:-translate-y-0.5"
+                  title={`Go to: ${currentWord}`}
+                >
                   GET STARTED
                 </button>
 
-                <button className="rounded-xl border border-gray-300 bg-white/70 px-6 py-3 text-sm font-semibold text-gray-900 shadow-sm transition active:scale-[0.98] hover:bg-white hover:-translate-y-0.5">
+                {/* ✅ Goes to consultation page */}
+                <button
+                  onClick={bookConsultation}
+                  className="rounded-xl border border-gray-300 bg-white/70 px-6 py-3 text-sm font-semibold text-gray-900 shadow-sm transition active:scale-[0.98] hover:bg-white hover:-translate-y-0.5"
+                >
                   BOOK A CONSULTATION
                 </button>
               </div>
