@@ -34,7 +34,6 @@ const MENU = [
       { label: "Air Ticketing", to: "/services/Air_ticket", icon: BadgeDollarSign },
       { label: "English Proficiency (Duolingo/IELTS)", to: "/services/english-tests", icon: Award },
       { label: "Technical Support (Coding)", to: "/services/technical", icon: MonitorCog },
-      // { label: "Internship Support", to: "/services/internship", icon: Users },
       { label: "Career Guidance", to: "/services/Career", icon: Star },
     ],
   },
@@ -61,17 +60,16 @@ const MENU = [
     ],
   },
   {
-  label: "Company",
-  icon: Building2,
-  items: [
-    { label: "About Us", to: "/about", icon: Info },            
-    { label: "Our Team", to: "/companyTeam", icon: Users },    
-    { label: "Partners", to: "/company/Partners", icon: Network }, 
-    //  { label: "Partner With Us", to: "/company/partners/request", icon: Network },
-    { label: "Testimonials", to: "/testimonials", icon: Star }, 
-    { label: "Contact", to: "/contact", icon: Phone },         
-  ],
-},
+    label: "Company",
+    icon: Building2,
+    items: [
+      { label: "About Us", to: "/about", icon: Info },
+      { label: "Our Team", to: "/companyTeam", icon: Users },
+      { label: "Partners", to: "/company/Partners", icon: Network },
+      { label: "Testimonials", to: "/testimonials", icon: Star },
+      { label: "Contact", to: "/contact", icon: Phone },
+    ],
+  },
 ];
 
 function Chevron({ open }) {
@@ -90,30 +88,16 @@ function Chevron({ open }) {
 
 export default function Header() {
   const [open, setOpen] = React.useState(false);
-  const [show, setShow] = React.useState(false);
 
-  // Desktop dropdown open state (by label)
+  // Desktop dropdown open state
   const [desktopOpen, setDesktopOpen] = React.useState(null);
 
-  // Mobile submenu open state (by label)
+  // Mobile submenu open state
   const [mobileSubOpen, setMobileSubOpen] = React.useState({});
 
   const navRef = React.useRef(null);
   const closeTimerRef = React.useRef(null);
 
-  // ✅ show animation runs only once per tab (opacity only, no translate)
-  React.useEffect(() => {
-    const alreadyShown = sessionStorage.getItem("headerShown");
-    if (alreadyShown) {
-      setShow(true);
-      return;
-    }
-    const t = setTimeout(() => setShow(true), 60);
-    sessionStorage.setItem("headerShown", "1");
-    return () => clearTimeout(t);
-  }, []);
-
-  // ✅ Close mobile menu on desktop resize
   React.useEffect(() => {
     const onResize = () => {
       if (window.innerWidth >= 1024) setOpen(false);
@@ -122,7 +106,6 @@ export default function Header() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  // ✅ ESC closes menus
   React.useEffect(() => {
     const onKeyDown = (e) => {
       if (e.key === "Escape") {
@@ -134,7 +117,6 @@ export default function Header() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
-  // ✅ Close desktop dropdown on outside click
   React.useEffect(() => {
     const onPointerDown = (e) => {
       if (navRef.current && !navRef.current.contains(e.target)) {
@@ -145,7 +127,6 @@ export default function Header() {
     return () => document.removeEventListener("pointerdown", onPointerDown);
   }, []);
 
-  // ✅ Lock scroll ONLY when mobile menu is open (stable)
   React.useEffect(() => {
     const prev = document.documentElement.style.overflow;
     document.documentElement.style.overflow = open ? "hidden" : "auto";
@@ -171,7 +152,6 @@ export default function Header() {
 
   return (
     <>
-      {/* ✅ Fixed header (solid background) */}
       <header className="fixed inset-x-0 top-0 z-50">
         <div className="mx-auto max-w-7xl px-4">
           <div
@@ -179,16 +159,21 @@ export default function Header() {
               "h-[84px] flex items-center justify-between rounded-2xl",
               "bg-white shadow-md ring-1 ring-black/10",
               "px-4",
-              "transition-opacity duration-500",
-              show ? "opacity-100" : "opacity-0",
             ].join(" ")}
           >
             {/* LOGO */}
-            <Link to="/" className="flex items-center hover:opacity-90 transition" onClick={closeAll}>
+            <Link
+              to="/"
+              className="flex items-center hover:opacity-90 transition"
+              onClick={closeAll}
+            >
               <div className="h-14 w-48 sm:w-56 overflow-hidden rounded-xl flex items-center">
                 <img
                   src="/logoo.png"
                   alt="Logo"
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
                   className="h-full w-full object-cover scale-110 origin-left"
                 />
               </div>
@@ -233,7 +218,6 @@ export default function Header() {
                       {menu.label} <Chevron open={isOpen} />
                     </button>
 
-                    {/* hover bridge */}
                     <div
                       className={[
                         "absolute left-0 top-full pt-3",
@@ -282,9 +266,12 @@ export default function Header() {
               })}
             </nav>
 
-            {/* right actions (desktop) */}
+            {/* right actions */}
             <div className="hidden lg:flex items-center gap-3">
-              <NavLink to="/login" className="text-sm font-semibold text-gray-700 hover:text-gray-900 transition">
+              <NavLink
+                to="/login"
+                className="text-sm font-semibold text-gray-700 hover:text-gray-900 transition"
+              >
                 LOG IN
               </NavLink>
 
@@ -336,7 +323,10 @@ export default function Header() {
                   const MenuIcon = menu.icon;
 
                   return (
-                    <div key={menu.label} className="rounded-2xl border border-gray-200/80 overflow-hidden">
+                    <div
+                      key={menu.label}
+                      className="rounded-2xl border border-gray-200/80 overflow-hidden"
+                    >
                       <button
                         type="button"
                         onClick={() =>
@@ -392,7 +382,11 @@ export default function Header() {
                 })}
 
                 <div className="pt-3 border-t border-gray-200 flex items-center gap-3">
-                  <NavLink to="/login" onClick={closeAll} className="text-sm font-semibold text-gray-700 hover:text-gray-900 transition">
+                  <NavLink
+                    to="/login"
+                    onClick={closeAll}
+                    className="text-sm font-semibold text-gray-700 hover:text-gray-900 transition"
+                  >
                     LOG IN
                   </NavLink>
 
@@ -410,7 +404,7 @@ export default function Header() {
         </div>
       </header>
 
-      {/* MOBILE OVERLAY (behind header) */}
+      {/* MOBILE OVERLAY */}
       <div
         className={[
           "lg:hidden fixed inset-0 z-40 transition-opacity duration-300",

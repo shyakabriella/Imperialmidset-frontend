@@ -26,83 +26,25 @@ function useInView(options = { threshold: 0.15 }) {
 
 /** Brand colors (logo style) */
 const BRAND = {
-  primary: "#2F0D34", // purple
-  accent: "#BD9F75", // gold
+  primary: "#2F0D34",
+  accent: "#BD9F75",
 };
 
-const INTAKES = ["Spring", "Summer", "Fall"];
-
-const FACULTIES = [
-  "Engineering / IT",
-  "Computer Science",
-  "Piloting",
-  "Aviation Management",
-  "Business & Management",
-  "Medicine & Health Sciences",
-  "Law",
-  "Education",
-  "Arts & Humanities",
-  "Social Sciences",
-  "Science",
-  "Architecture / Design",
-  "Agriculture / Environmental Studies",
-  "Other",
-];
-
-const LEVELS = [
-  {
-    key: "undergrad",
-    title: "Undergraduate",
-    subtitle: "Bachelor’s / Diploma Programs",
-    bullets: [
-      "Help choosing the best course and country",
-      "University shortlisting based on budget + grades",
-      "Application support + documents review",
-      "Scholarship guidance where available",
-    ],
-  },
-  {
-    key: "postgrad",
-    title: "Postgraduate",
-    subtitle: "Master’s / PhD Programs",
-    bullets: [
-      "Help choosing the best course and country",
-      "University shortlisting based on budget + grades",
-      "Application support + documents review",
-      "Scholarship guidance where available",
-      "Program & supervisor matching (where needed)",
-      "SOP / Motivation letter coaching",
-      "Research proposal guidance (if required)",
-      "Strong CV polishing + application submission",
-    ],
-  },
-];
+/** Hero banner colors */
+const HERO = {
+  paper: "#F7F1E6",
+  banner: "#F6B100",
+  blue: "#2563EB",
+  ink: "#0B1220",
+};
 
 const PROCESS = [
-  {
-    title: "Free Profile Assessment",
-    desc: "We review your education background, budget, preferred country, and goals.",
-  },
-  {
-    title: "University & Program Matching",
-    desc: "We shortlist universities that match your profile and help you choose the best option.",
-  },
-  {
-    title: "Document Preparation",
-    desc: "We guide you on SOP, CV, recommendations, transcripts, and any required forms.",
-  },
-  {
-    title: "Application Submission",
-    desc: "We submit your applications and follow up with the university when needed.",
-  },
-  {
-    title: "Offer Letter & Next Steps",
-    desc: "We guide you on acceptance, deposit, and timelines after you receive the offer.",
-  },
-  {
-    title: "Visa & Travel Support",
-    desc: "We support visa steps, accommodation guidance, and air ticketing.",
-  },
+  { title: "Free Profile Assessment", desc: "We review your education background, budget, preferred country, and goals." },
+  { title: "University & Program Matching", desc: "We shortlist universities that match your profile and help you choose the best option." },
+  { title: "Document Preparation", desc: "We guide you on SOP, CV, recommendations, transcripts, and any required forms." },
+  { title: "Application Submission", desc: "We submit your applications and follow up with the university when needed." },
+  { title: "Offer Letter & Next Steps", desc: "We guide you on acceptance, deposit, and timelines after you receive the offer." },
+  { title: "Visa & Travel Support", desc: "We support visa steps, accommodation guidance, and air ticketing." },
 ];
 
 const DOCS = [
@@ -143,15 +85,6 @@ const FAQS = [
   },
 ];
 
-function StatCard({ label, value }) {
-  return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
-      <div className="text-xs font-bold tracking-widest text-gray-500">{label}</div>
-      <div className="mt-2 text-2xl font-extrabold text-gray-900">{value}</div>
-    </div>
-  );
-}
-
 function SectionTitle({ kicker, title, desc }) {
   return (
     <div className="text-center">
@@ -164,470 +97,123 @@ function SectionTitle({ kicker, title, desc }) {
   );
 }
 
-/* ---------------- Upload helpers ---------------- */
-const ACCEPTED_EXTS = [".pdf", ".doc", ".docx", ".jpg", ".jpeg", ".png"];
-const ACCEPT_ATTR =
-  "application/pdf,.pdf,application/msword,.doc,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.docx,image/jpeg,image/png,.jpg,.jpeg,.png";
-
-const MAX_FILE_MB = 10; // per file
-const MAX_TOTAL_MB = 25; // total (nice limit)
-
-function bytesToMB(bytes) {
-  return bytes / (1024 * 1024);
-}
-
-function prettySize(bytes) {
-  const mb = bytesToMB(bytes);
-  if (mb < 1) return `${Math.round(bytes / 1024)} KB`;
-  return `${mb.toFixed(1)} MB`;
-}
-
-function fileExt(name = "") {
-  const i = name.lastIndexOf(".");
-  return i >= 0 ? name.slice(i).toLowerCase() : "";
-}
-
-function isAllowedFile(file) {
-  const ext = fileExt(file.name);
-  return ACCEPTED_EXTS.includes(ext);
-}
-
 export default function StudyAbroadUniversity() {
   const navigate = useNavigate();
-  const { ref, inView } = useInView();
+  const hero = useInView({ threshold: 0.18 });
 
-  // refs to scroll to errors
-  const levelRef = React.useRef(null);
-  const intakeRef = React.useRef(null);
-  const assessmentRef = React.useRef(null);
-
-  const [level, setLevel] = React.useState("undergrad");
+  // ✅ FIX: faqOpen state was missing
   const [faqOpen, setFaqOpen] = React.useState(0);
 
-  const [errors, setErrors] = React.useState({
-    level: "",
-    intake: "",
-    faculty: "",
-    country: "",
-  });
-
-  const activeLevel = LEVELS.find((l) => l.key === level);
-
-  const [form, setForm] = React.useState({
-    fullName: "",
-    email: "",
-    phone: "",
-    country: "",
-    faculty: "",
-    otherFaculty: "",
-    intake: "",
-    notes: "",
-  });
-
-  const facultyFinal =
-    form.faculty === "Other" ? (form.otherFaculty || "").trim() : form.faculty;
-
-  const onChange = (e) => {
-    const { name, value } = e.target;
-
-    setForm((prev) => {
-      const next = { ...prev, [name]: value };
-
-      // If faculty changes away from Other, clear otherFaculty
-      if (name === "faculty" && value !== "Other") {
-        next.otherFaculty = "";
-      }
-
-      return next;
-    });
-
-    // clear relevant error live
-    if (name === "faculty" || name === "otherFaculty") {
-      setErrors((p) => ({ ...p, faculty: "" }));
-    }
-    if (name === "country") {
-      setErrors((p) => ({ ...p, country: "" }));
-    }
-  };
-
-  const scrollTo = (refEl) => {
-    setTimeout(() => {
-      refEl?.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-    }, 50);
-  };
-
-  const validateRequired = () => {
-    const nextErrors = { level: "", intake: "", faculty: "", country: "" };
-
-    if (!level) nextErrors.level = "Please choose a level (Undergraduate or Postgraduate).";
-    if (!form.intake) nextErrors.intake = "Please select an intake (Spring, Summer, or Fall).";
-
-    if (!form.faculty) {
-      nextErrors.faculty = "Please select a faculty.";
-    } else if (form.faculty === "Other" && !form.otherFaculty.trim()) {
-      nextErrors.faculty = "Please specify your faculty (because you selected Other).";
-    }
-
-    if (!form.country.trim()) nextErrors.country = "Please enter your preferred country.";
-
-    setErrors(nextErrors);
-
-    if (nextErrors.level) {
-      scrollTo(levelRef);
-      return false;
-    }
-    if (nextErrors.intake) {
-      scrollTo(intakeRef);
-      return false;
-    }
-    if (nextErrors.faculty || nextErrors.country) {
-      scrollTo(assessmentRef);
-      return false;
-    }
-
-    return true;
-  };
-
-  const scrollToAssessment = () => {
-    document.getElementById("assessment")?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  const inputBase =
-    "mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[rgba(47,13,52,0.18)]";
-  const errorText = "mt-2 text-xs font-semibold text-red-600";
-
-  /* ---------------- Document upload state ---------------- */
-  const fileInputRef = React.useRef(null);
-  const [dragOver, setDragOver] = React.useState(false);
-  const [docError, setDocError] = React.useState("");
-  const [docs, setDocs] = React.useState([]); // File[]
-  const totalBytes = React.useMemo(() => docs.reduce((s, f) => s + (f?.size || 0), 0), [docs]);
-
-  const addFiles = (fileList) => {
-    const incoming = Array.from(fileList || []);
-    if (incoming.length === 0) return;
-
-    setDocError("");
-
-    // validate + filter duplicates
-    const next = [];
-    const current = docs;
-
-    for (const f of incoming) {
-      if (!isAllowedFile(f)) {
-        setDocError(`Unsupported file "${f.name}". Allowed: PDF, DOC, DOCX, JPG, PNG.`);
-        continue;
-      }
-      if (bytesToMB(f.size) > MAX_FILE_MB) {
-        setDocError(`"${f.name}" is too large. Max ${MAX_FILE_MB}MB per file.`);
-        continue;
-      }
-
-      const duplicate = current.some(
-        (x) =>
-          x.name === f.name &&
-          x.size === f.size &&
-          x.lastModified === f.lastModified
-      );
-      if (!duplicate) next.push(f);
-    }
-
-    const newTotalBytes = totalBytes + next.reduce((s, f) => s + f.size, 0);
-    if (bytesToMB(newTotalBytes) > MAX_TOTAL_MB) {
-      setDocError(`Total upload is too large. Max ${MAX_TOTAL_MB}MB total.`);
-      return;
-    }
-
-    if (next.length) setDocs((prev) => [...prev, ...next]);
-  };
-
-  const onPickFiles = (e) => {
-    addFiles(e.target.files);
-    // allow selecting the same file again if removed
-    e.target.value = "";
-  };
-
-  const removeFile = (idx) => {
-    setDocs((prev) => prev.filter((_, i) => i !== idx));
-  };
-
-  const submit = async (e) => {
-    e.preventDefault();
-
-    if (!validateRequired()) return;
-
-    const payload = {
-      level,
-      ...form,
-      faculty: facultyFinal,
-      intake: form.intake,
-    };
-
-    // ✅ Ready for backend upload (FormData supports files)
-    const fd = new FormData();
-    fd.append("payload", JSON.stringify(payload));
-    docs.forEach((file) => fd.append("documents", file));
-
-    console.log("Study Abroad Inquiry:", payload);
-    console.log("Documents:", docs);
-
-    // ✅ If you have an API endpoint, enable this:
-    // await fetch("/api/study-abroad", { method: "POST", body: fd });
-
-    alert(
-      `✅ Thanks! We received your request.\n\nUploaded documents: ${docs.length}\nWe will contact you soon.`
-    );
+  /** ✅ Go to separate assessment page */
+  const goAssessment = () => {
+    navigate("/services/study-abroad/assessment");
   };
 
   return (
-    <div className="bg-white relative">
-      {/* Soft background */}
-      <div
-        className="absolute left-0 right-0 top-0 -z-10 h-[520px]"
-        style={{
-          background:
-            "radial-gradient(800px 260px at 20% 20%, rgba(47,13,52,0.12), transparent 60%), radial-gradient(800px 260px at 80% 10%, rgba(189,159,117,0.14), transparent 60%)",
-        }}
-      />
+    <div className="bg-white overflow-x-hidden">
+      {/* ✅ HERO + EDGE-TO-EDGE BANNER */}
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 -z-20" style={{ backgroundColor: HERO.paper }} />
 
-      {/* Breadcrumbs */}
-      <div className="mx-auto max-w-7xl px-4 pt-10">
-        <div className="text-xs text-gray-500">
-          <Link to="/" className="hover:underline">
-            Home
-          </Link>{" "}
-          <span className="mx-1">/</span>
-          <span className="text-gray-700">Services</span>{" "}
-          <span className="mx-1">/</span>
-          <span className="text-gray-900 font-semibold">Study Abroad</span>
-        </div>
-      </div>
+        {/* texture (must NOT block clicks) */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-10 opacity-[0.35]"
+          style={{
+            backgroundImage:
+              "radial-gradient(rgba(15,23,42,0.06) 1px, transparent 1px), radial-gradient(rgba(15,23,42,0.04) 1px, transparent 1px)",
+            backgroundSize: "34px 34px",
+            backgroundPosition: "0 0, 17px 17px",
+          }}
+        />
 
-      {/* HERO */}
-      <section ref={ref} className="mx-auto max-w-7xl px-4 py-10 sm:py-14">
-        <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
-          {/* Left */}
-          <div
-            className={[
-              "transition-all duration-700 ease-out",
-              inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6",
-            ].join(" ")}
-          >
-            <div className="inline-flex items-center gap-2 rounded-full bg-white/70 backdrop-blur px-4 py-2 text-xs font-bold text-gray-700 ring-1 ring-black/5 shadow-sm">
-               Study Abroad Support
-              <span className="h-1 w-1 rounded-full bg-gray-400" />
-              Undergraduate & Postgraduate
-            </div>
+        <div ref={hero.ref} className="relative z-10 mx-auto max-w-7xl px-4 pt-[120px] pb-10 text-center">
+          <h1 className="text-4xl sm:text-6xl font-extrabold text-gray-900">Study Abroad</h1>
 
-            <h1 className="mt-4 text-3xl sm:text-4xl font-extrabold text-gray-900 leading-tight">
-              Get into the right university — with full support from start to finish
-            </h1>
-
-            <p className="mt-4 text-gray-600 leading-relaxed">
-              We help you choose the best program, prepare strong documents, submit applications,
-              and guide you through visa and travel steps — clearly and professionally.
-            </p>
-
-            {/* CTAs */}
-            <div className="mt-6 flex flex-wrap gap-3">
-              <button
-                type="button"
-                onClick={scrollToAssessment}
-                className="rounded-xl px-6 py-3 text-sm font-semibold text-white shadow transition active:scale-[0.98]"
-                style={{ backgroundColor: BRAND.primary }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#250A28")}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = BRAND.primary)}
-              >
-                Get Free Assessment
-              </button>
-
-              <button
-                type="button"
-                onClick={() => navigate("/company/about")}
-                className="rounded-xl border bg-white px-6 py-3 text-sm font-semibold shadow-sm transition active:scale-[0.98]"
-                style={{ borderColor: BRAND.accent, color: BRAND.primary }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.backgroundColor = "rgba(189,159,117,0.10)")
-                }
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "white")}
-              >
-                Learn About Us
-              </button>
-            </div>
-
-            <div className="mt-8 grid gap-4 sm:grid-cols-3">
-              <StatCard label="Support Type" value="Full" />
-              <StatCard label="Levels" value="UG + PG" />
-              <StatCard label="Response" value="Fast" />
-            </div>
+          <div className="mt-4 text-sm sm:text-base text-gray-700">
+            <Link to="/" className="text-yellow-700 hover:underline">
+              Home
+            </Link>{" "}
+            <span className="mx-2 text-gray-400">/</span>
+            <span className="text-gray-700">Services</span>
+            <span className="mx-2 text-gray-400">/</span>
+            <span className="text-gray-900 font-semibold">Study Abroad</span>
           </div>
 
-          {/* Right image */}
+          <p className="mx-auto mt-5 max-w-3xl text-base sm:text-lg text-gray-700 leading-relaxed">
+            Get into the right university with full support: profile assessment, program matching, documents,
+            application submission, and clear guidance for visa & travel steps.
+          </p>
+        </div>
+
+        {/* ✅ FULL WIDTH BANNER */}
+        <div className="relative z-10 w-screen left-1/2 -translate-x-1/2 overflow-hidden">
+          <div className="absolute inset-0" style={{ backgroundColor: HERO.banner }} />
+
           <div
-            className={[
-              "relative overflow-hidden rounded-3xl shadow-lg ring-1 ring-black/10",
-              "min-h-[280px] sm:min-h-[360px] lg:min-h-[420px]",
-              "transition-all duration-700 ease-out",
-              inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6",
-            ].join(" ")}
-            style={{ transitionDelay: "120ms" }}
-          >
-            <img
-              src="/abroad.jpg"
-              alt="Study abroad"
-              className="absolute inset-0 h-full w-full object-cover"
-            />
-            <div className="absolute inset-0 bg-black/15" />
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 opacity-[0.12]"
+            style={{ backgroundImage: "linear-gradient(90deg, rgba(0,0,0,0.08), transparent 55%)" }}
+          />
 
-            <div className="absolute left-5 top-5 rounded-2xl bg-white/90 backdrop-blur px-4 py-2 text-xs font-bold text-gray-900 shadow ring-1 ring-black/5">
-              Your pathway to success
-            </div>
-
-            {/* <div className="absolute bottom-5 left-5 right-5 rounded-2xl bg-white/90 backdrop-blur p-4 shadow ring-1 ring-black/5">
-              <div className="text-sm font-extrabold text-gray-900">What you get </div>
-              <div className="mt-1 text-xs text-gray-600">
-                Matching • Documents • Application • Visa Guidance • Travel Support
+          <div className="relative mx-auto max-w-7xl px-4">
+            <div className="py-8 pr-[72px] sm:pr-[96px]">
+              <div className="text-left flex items-center justify-center sm:justify-start">
+                <div>
+                  <div className="text-2xl sm:text-3xl font-extrabold text-gray-900 leading-snug">
+                    Ready to start your application?
+                  </div>
+                  <div className="mt-1 text-sm sm:text-base text-gray-800">
+                    Get a free assessment or contact us for guidance.
+                  </div>
+                </div>
               </div>
-            </div> */}
-            
+
+              <div className="mt-4 flex flex-wrap gap-3 justify-center sm:justify-start">
+                <button
+                  type="button"
+                  onClick={goAssessment}
+                  className="rounded-xl px-5 py-2.5 text-sm font-semibold text-white shadow transition active:scale-[0.98]"
+                  style={{ backgroundColor: HERO.blue }}
+                >
+                  Get Free Assessment
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => navigate("/contact")}
+                  className="rounded-xl px-5 py-2.5 text-sm font-semibold shadow-sm border bg-white/20 hover:bg-white/25 transition active:scale-[0.98]"
+                  style={{ borderColor: "rgba(0,0,0,0.18)", color: HERO.ink }}
+                >
+                  Contact Us →
+                </button>
+              </div>
+            </div>
           </div>
+
+          <button
+            type="button"
+            onClick={goAssessment}
+            className="absolute right-0 top-0 h-full w-14 sm:w-20 flex items-center justify-center"
+            style={{ backgroundColor: HERO.blue }}
+            aria-label="Go to assessment form page"
+          >
+            <div className="rotate-90 text-white font-bold tracking-widest text-xs sm:text-sm">
+              Assessment
+            </div>
+          </button>
         </div>
+
+        <div className="h-10" />
       </section>
 
-      {/* LEVEL SELECT + INTAKE */}
+      {/* IMAGE ONLY */}
       <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-          {/* Level */}
-          <div ref={levelRef} className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <div className="text-xs font-bold tracking-widest" style={{ color: BRAND.primary }}>
-                CHOOSE YOUR LEVEL (Required)
-              </div>
-              <h2 className="mt-2 text-2xl font-extrabold text-gray-900">
-                Undergraduate or Postgraduate?
-              </h2>
-              <p className="mt-2 text-sm text-gray-600">
-                Select your level so we show the right guidance and expectations.
-              </p>
-            </div>
-
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setLevel("undergrad");
-                  setErrors((p) => ({ ...p, level: "" }));
-                }}
-                className="rounded-xl px-4 py-2 text-sm font-semibold transition shadow-sm"
-                style={{
-                  backgroundColor: level === "undergrad" ? BRAND.primary : "white",
-                  color: level === "undergrad" ? "white" : "#111827",
-                  border: level === "undergrad" ? "1px solid transparent" : "1px solid #D1D5DB",
-                }}
-              >
-                Undergraduate
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setLevel("postgrad");
-                  setErrors((p) => ({ ...p, level: "" }));
-                }}
-                className="rounded-xl px-4 py-2 text-sm font-semibold transition shadow-sm"
-                style={{
-                  backgroundColor: level === "postgrad" ? BRAND.primary : "white",
-                  color: level === "postgrad" ? "white" : "#111827",
-                  border: level === "postgrad" ? "1px solid transparent" : "1px solid #D1D5DB",
-                }}
-              >
-                Postgraduate
-              </button>
-            </div>
-          </div>
-
-          {errors.level ? <div className={errorText}>{errors.level}</div> : null}
-
-          {/* Intake */}
-          <div ref={intakeRef} className="mt-6 rounded-2xl border border-gray-200 bg-white p-5">
-            <div className="text-xs font-bold tracking-widest" style={{ color: BRAND.primary }}>
-              SELECT INTAKE (Required)
-            </div>
-
-            <h3 className="mt-2 text-lg font-extrabold text-gray-900">
-              When do you want to start?
-            </h3>
-
-            <p className="mt-2 text-sm text-gray-600">
-              Choose your preferred intake. We will recommend universities with matching deadlines.
-            </p>
-
-            <div className="mt-4 grid gap-3 sm:grid-cols-3">
-              {INTAKES.map((it) => {
-                const active = form.intake === it;
-                return (
-                  <button
-                    key={it}
-                    type="button"
-                    onClick={() => {
-                      setForm((p) => ({ ...p, intake: it }));
-                      setErrors((p) => ({ ...p, intake: "" }));
-                    }}
-                    className="rounded-2xl px-4 py-3 text-sm font-semibold shadow-sm transition active:scale-[0.98]"
-                    style={{
-                      backgroundColor: active ? BRAND.primary : "white",
-                      color: active ? "white" : "#111827",
-                      border: active ? "1px solid transparent" : "1px solid #D1D5DB",
-                    }}
-                  >
-                    {it}
-                  </button>
-                );
-              })}
-            </div>
-
-            <div className="mt-3 text-xs text-gray-500">
-              Selected intake:{" "}
-              <span className="font-semibold text-gray-900">{form.intake || "—"}</span>
-            </div>
-
-            {errors.intake ? <div className={errorText}>{errors.intake}</div> : null}
-          </div>
-
-          {/* Level details */}
-          <div className="mt-6 grid gap-6 lg:grid-cols-2">
-            <div className="rounded-2xl bg-gray-50 p-5">
-              <div className="text-sm font-extrabold text-gray-900">{activeLevel.title}</div>
-              <div className="text-xs text-gray-600 mt-1">{activeLevel.subtitle}</div>
-
-              <ul className="mt-4 space-y-2 text-sm text-gray-700">
-                {activeLevel.bullets.map((b) => (
-                  <li key={b} className="flex gap-3">
-                    <span className="mt-1 h-2 w-2 rounded-full" style={{ backgroundColor: BRAND.accent }} />
-                    {b}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="rounded-2xl border border-gray-200 bg-white p-5">
-              <div className="text-sm font-extrabold text-gray-900">Recommended next step</div>
-              <p className="mt-2 text-sm text-gray-600 leading-relaxed">
-                Fill the free assessment form. We will review your profile and share a shortlist
-                of universities/programs that match your goals.
-              </p>
-
-              <button
-                type="button"
-                onClick={scrollToAssessment}
-                className="mt-4 rounded-xl px-5 py-2.5 text-sm font-semibold text-white shadow transition active:scale-[0.98]"
-                style={{ backgroundColor: BRAND.primary }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#250A28")}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = BRAND.primary)}
-              >
-                Go to Assessment Form
-              </button>
-            </div>
+        <div className="relative overflow-hidden rounded-3xl shadow-lg ring-1 ring-black/10 min-h-[260px] sm:min-h-[660px]">
+          <img src="/abroad.jpg" alt="Study abroad" className="absolute inset-0 h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-black/15" />
+          <div className="absolute left-5 top-5 rounded-2xl bg-white/90 backdrop-blur px-4 py-2 text-xs font-bold text-gray-900 shadow ring-1 ring-black/5">
+            Your pathway to success
           </div>
         </div>
       </section>
@@ -655,6 +241,17 @@ export default function StudyAbroadUniversity() {
               <p className="mt-3 text-sm text-gray-600 leading-relaxed">{s.desc}</p>
             </div>
           ))}
+        </div>
+
+        <div className="mt-10 flex justify-center">
+          <button
+            type="button"
+            onClick={goAssessment}
+            className="rounded-xl px-6 py-3 text-sm font-semibold text-white shadow transition active:scale-[0.98]"
+            style={{ backgroundColor: BRAND.primary }}
+          >
+            Start Free Assessment →
+          </button>
         </div>
       </section>
 
@@ -684,12 +281,8 @@ export default function StudyAbroadUniversity() {
             <div className="text-xs font-bold tracking-widest" style={{ color: BRAND.primary }}>
               DESTINATIONS
             </div>
-            <h3 className="mt-2 text-2xl font-extrabold text-gray-900">
-              Popular study destinations
-            </h3>
-            <p className="mt-2 text-sm text-gray-600">
-              We guide you based on your budget, visa rules, and your goals.
-            </p>
+            <h3 className="mt-2 text-2xl font-extrabold text-gray-900">Popular study destinations</h3>
+            <p className="mt-2 text-sm text-gray-600">We guide you based on your budget, visa rules, and your goals.</p>
 
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
               {DESTINATIONS.map((c) => (
@@ -699,298 +292,18 @@ export default function StudyAbroadUniversity() {
                 </div>
               ))}
             </div>
-
-            <button
-              type="button"
-              onClick={scrollToAssessment}
-              className="mt-5 w-full rounded-xl px-5 py-2.5 text-sm font-semibold text-white shadow transition active:scale-[0.98]"
-              style={{ backgroundColor: BRAND.primary }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#250A28")}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = BRAND.primary)}
-            >
-              Ask us to recommend your best country
-            </button>
           </div>
         </div>
-      </section>
 
-      {/* FREE ASSESSMENT FORM */}
-      <section id="assessment" className="py-14" style={{ backgroundColor: "rgba(47,13,52,0.04)" }}>
-        <div className="mx-auto max-w-7xl px-4">
-          <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
-            <div>
-              <div className="text-xs font-bold tracking-widest" style={{ color: BRAND.primary }}>
-                FREE ASSESSMENT
-              </div>
-              <h2 className="mt-3 text-3xl font-extrabold text-gray-900">Tell us about you 👇</h2>
-              <p className="mt-3 text-gray-600 leading-relaxed">
-                Share basic details and upload documents (optional). We’ll contact you with a shortlist
-                of universities and next steps.
-              </p>
-
-              <div className="mt-6 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-                <div className="text-sm font-extrabold text-gray-900">Your selection:</div>
-                <div className="mt-2 text-sm text-gray-700">
-                  🎓 Level: <span className="font-semibold">{activeLevel.title}</span>
-                </div>
-                <div className="mt-2 text-sm text-gray-700">
-                  🗓️ Intake: <span className="font-semibold">{form.intake || "Not selected"}</span>
-                </div>
-                <div className="mt-2 text-sm text-gray-700">
-                  📎 Documents:{" "}
-                  <span className="font-semibold">
-                    {docs.length ? `${docs.length} file(s)` : "None uploaded"}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <form
-              ref={assessmentRef}
-              onSubmit={submit}
-              className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm"
-            >
-              <div className="grid gap-4">
-                <div>
-                  <label className="text-xs font-bold text-gray-700">Full Name</label>
-                  <input
-                    name="fullName"
-                    value={form.fullName}
-                    onChange={onChange}
-                    required
-                    className={`${inputBase} border-gray-300`}
-                    placeholder="Your name"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs font-bold text-gray-700">Email</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={form.email}
-                    onChange={onChange}
-                    required
-                    className={`${inputBase} border-gray-300`}
-                    placeholder="you@email.com"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs font-bold text-gray-700">Phone / WhatsApp</label>
-                  <input
-                    name="phone"
-                    value={form.phone}
-                    onChange={onChange}
-                    className={`${inputBase} border-gray-300`}
-                    placeholder="+250 ..."
-                  />
-                </div>
-
-                {/* Faculty required */}
-                <div>
-                  <label className="text-xs font-bold text-gray-700">
-                    Preferred Faculty <span className="text-red-600">*</span>
-                  </label>
-                  <select
-                    name="faculty"
-                    value={form.faculty}
-                    onChange={onChange}
-                    className={`${inputBase} bg-white ${errors.faculty ? "border-red-500" : "border-gray-300"}`}
-                    required
-                  >
-                    <option value="">Select faculty...</option>
-                    {FACULTIES.map((f) => (
-                      <option key={f} value={f}>
-                        {f}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.faculty ? <div className={errorText}>{errors.faculty}</div> : null}
-                </div>
-
-                {/* Other faculty required if "Other" */}
-                {form.faculty === "Other" && (
-                  <div>
-                    <label className="text-xs font-bold text-gray-700">
-                      Please specify your faculty <span className="text-red-600">*</span>
-                    </label>
-                    <input
-                      name="otherFaculty"
-                      value={form.otherFaculty}
-                      onChange={onChange}
-                      className={`${inputBase} ${errors.faculty ? "border-red-500" : "border-gray-300"}`}
-                      placeholder="e.g. Nursing, Data Science, Aviation Engineering..."
-                      required
-                    />
-                  </div>
-                )}
-
-                {/* Country required */}
-                <div>
-                  <label className="text-xs font-bold text-gray-700">
-                    Preferred Country <span className="text-red-600">*</span>
-                  </label>
-                  <input
-                    name="country"
-                    value={form.country}
-                    onChange={onChange}
-                    className={`${inputBase} ${errors.country ? "border-red-500" : "border-gray-300"}`}
-                    placeholder="Canada, USA, UK..."
-                    required
-                  />
-                  {errors.country ? <div className={errorText}>{errors.country}</div> : null}
-                </div>
-
-                {/* Notes (optional) */}
-                <div>
-                  <label className="text-xs font-bold text-gray-700">Extra Notes (optional)</label>
-                  <textarea
-                    name="notes"
-                    value={form.notes}
-                    onChange={onChange}
-                    rows={3}
-                    className={`${inputBase} border-gray-300 resize-none`}
-                    placeholder="Anything important? Budget, city preference, scholarship need, deadlines..."
-                  />
-                </div>
-
-                {/* ✅ DOCUMENT UPLOAD (optional) */}
-                <div className="rounded-2xl border border-gray-200 bg-white p-4">
-                  <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <div className="text-xs font-bold tracking-widest" style={{ color: BRAND.primary }}>
-                        DOCUMENT UPLOAD (Optional)
-                      </div>
-                      <div className="mt-1 text-sm font-extrabold text-gray-900">
-                        Upload your documents 📎
-                      </div>
-                      <div className="mt-1 text-xs text-gray-600">
-                        PDF, DOC, DOCX, JPG, PNG • Max {MAX_FILE_MB}MB each • Max {MAX_TOTAL_MB}MB total
-                      </div>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => fileInputRef.current?.click()}
-                      className="shrink-0 rounded-xl px-4 py-2 text-xs font-bold text-white shadow transition active:scale-[0.98]"
-                      style={{ backgroundColor: BRAND.primary }}
-                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#250A28")}
-                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = BRAND.primary)}
-                    >
-                      Browse
-                    </button>
-
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      multiple
-                      accept={ACCEPT_ATTR}
-                      className="hidden"
-                      onChange={onPickFiles}
-                    />
-                  </div>
-
-                  {/* Dropzone */}
-                  <div
-                    onDragEnter={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setDragOver(true);
-                    }}
-                    onDragOver={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setDragOver(true);
-                    }}
-                    onDragLeave={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setDragOver(false);
-                    }}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setDragOver(false);
-                      addFiles(e.dataTransfer.files);
-                    }}
-                    className={[
-                      "mt-4 rounded-2xl border-2 border-dashed p-4 transition",
-                      dragOver ? "bg-gray-50 border-gray-400" : "bg-white border-gray-200",
-                    ].join(" ")}
-                  >
-                    <div className="text-center">
-                      <div className="text-sm font-semibold text-gray-900">
-                        Drag & drop files here
-                      </div>
-                      <div className="mt-1 text-xs text-gray-500">
-                        Or click <span className="font-semibold">Browse</span> to select files
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Errors */}
-                  {docError ? <div className="mt-3 text-xs font-semibold text-red-600">{docError}</div> : null}
-
-                  {/* Selected files */}
-                  <div className="mt-4">
-                    {docs.length === 0 ? (
-                      <div className="text-xs text-gray-500">
-                        No files selected yet.
-                      </div>
-                    ) : (
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between text-xs text-gray-600">
-                          <span>
-                            Selected: <span className="font-semibold text-gray-900">{docs.length}</span>
-                          </span>
-                          <span>
-                            Total: <span className="font-semibold text-gray-900">{prettySize(totalBytes)}</span>
-                          </span>
-                        </div>
-
-                        <ul className="space-y-2">
-                          {docs.map((f, idx) => (
-                            <li
-                              key={`${f.name}-${f.size}-${f.lastModified}`}
-                              className="flex items-center justify-between gap-3 rounded-xl bg-gray-50 px-3 py-2 ring-1 ring-black/5"
-                            >
-                              <div className="min-w-0">
-                                <div className="truncate text-xs font-bold text-gray-900">{f.name}</div>
-                                <div className="text-[11px] text-gray-600">{prettySize(f.size)}</div>
-                              </div>
-
-                              <button
-                                type="button"
-                                onClick={() => removeFile(idx)}
-                                className="rounded-lg px-3 py-1 text-[11px] font-bold text-gray-900 bg-white ring-1 ring-black/10 hover:bg-gray-100 transition active:scale-95"
-                              >
-                                Remove
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <button
-                  type="submit"
-                  className="mt-2 rounded-xl px-6 py-3 text-sm font-semibold text-white shadow transition active:scale-[0.98]"
-                  style={{ backgroundColor: BRAND.primary }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#250A28")}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = BRAND.primary)}
-                >
-                  Submit Assessment
-                </button>
-
-                <div className="text-base text-gray-500">
-                  By submitting, you agree we may contact you for follow-up about your request.
-                </div>
-              </div>
-            </form>
-          </div>
+        <div className="mt-10 flex justify-center">
+          <button
+            type="button"
+            onClick={goAssessment}
+            className="rounded-xl px-6 py-3 text-sm font-semibold text-white shadow transition active:scale-[0.98]"
+            style={{ backgroundColor: BRAND.primary }}
+          >
+            Apply Now →
+          </button>
         </div>
       </section>
 
@@ -1028,21 +341,6 @@ export default function StudyAbroadUniversity() {
               </div>
             );
           })}
-        </div>
-
-        <div className="mt-10 flex justify-center">
-          <button
-            type="button"
-            onClick={() => navigate("/contact")}
-            className="rounded-xl border bg-white px-6 py-3 text-sm font-semibold shadow-sm transition active:scale-[0.98]"
-            style={{ borderColor: BRAND.accent, color: BRAND.primary }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor = "rgba(189,159,117,0.10)")
-            }
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "white")}
-          >
-            Still have a question? Contact us 📩
-          </button>
         </div>
       </section>
     </div>

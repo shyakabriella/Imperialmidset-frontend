@@ -161,18 +161,18 @@ export default function CareerGuidance() {
       ) : null}
 
       {/* HERO */}
-      <section className="mx-auto max-w-7xl px-4 py-10 sm:py-14">
+      <section className="mx-auto max-w-7xl px-4 py-6 sm:py-8">
         <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
           <div className="lg:col-span-6">
-            <div className="flex flex-wrap gap-2">
+            {/* <div className="flex flex-wrap gap-2">
               <Pill>Career Guidance</Pill>
               <Pill tone="gold">Professional CV</Pill>
               <Pill>Interview Coaching</Pill>
               <Pill tone="gold">Job Strategy</Pill>
-            </div>
+            </div> */}
 
             <h1 className="mt-4 text-3xl sm:text-5xl font-extrabold text-gray-900 leading-tight">
-              Build a clear career path — and move with confidence 
+              Build a clear career path and move with confidence 
             </h1>
 
             <p className="mt-4 text-gray-600 leading-relaxed">

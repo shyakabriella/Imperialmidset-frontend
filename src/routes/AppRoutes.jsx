@@ -28,6 +28,9 @@ import Quotation from "../pages/how-it-works/Quotation";
 import PaymentInvoice from "../pages/how-it-works/PaymentInvoice";
 import Tracking from "../pages/how-it-works/Tracking";
 import TechnicalSupport from "../pages/services/TechnicalSupport";
+import StudyAbroadAssessment from "../pages/services/StudyAbroadAssessment";
+import VisaSupportForm from "../pages/services/VisaSupportForm";
+import UniversityDetails from "../pages/UniversityDetails";
 
 export default function AppRoutes() {
   return (
@@ -38,6 +41,7 @@ export default function AppRoutes() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/how-it-works/appointments" element={<Appointments />} />
         <Route path="/testimonials" element={<Testimonials/>}/>
+        <Route path="/universities/:slug" element={<UniversityDetails />} />
         <Route path="/companyTeam"element={<CompanyTeam/>}/>
         <Route path="/company/partners"element={<CompanyPartners/>}/>
         <Route path="/company/partners/request"element={<PartnershipRequest/>}/>
@@ -66,6 +70,8 @@ export default function AppRoutes() {
         <Route path="services/Career" element={<CareerGuidance />} />
         <Route path="services/Career/book-meeting" element={<CareerBookMeeting />} />
         <Route path="services/technical"element={<TechnicalSupport/>}/>
+       <Route path="/services/study-abroad/assessment" element={<StudyAbroadAssessment />} />
+       <Route path="/services/visa-support/request"element={<VisaSupportForm/>}/>
       </Route>
     </Routes>
   );

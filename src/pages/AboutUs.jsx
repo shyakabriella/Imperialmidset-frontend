@@ -47,9 +47,9 @@ export default function AboutUs() {
             />
             <div className="absolute inset-0 bg-black/10" />
 
-            <div className="absolute left-5 top-5 rounded-2xl bg-white/90 backdrop-blur px-4 py-2 text-xs font-bold text-gray-900 shadow ring-1 ring-black/5">
+            {/* <div className="absolute left-5 top-5 rounded-2xl bg-white/90 backdrop-blur px-4 py-2 text-xs font-bold text-gray-900 shadow ring-1 ring-black/5">
               International Mindset PathWays
-            </div>
+            </div> */}
           </div>
 
           {/* RIGHT CONTENT */}

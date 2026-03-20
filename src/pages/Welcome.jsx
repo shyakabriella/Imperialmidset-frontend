@@ -12,10 +12,8 @@ const WORDS = [
   "Career Guidance",
 ];
 
-// ✅ Always reserve space using the longest word (auto, future-proof)
 const LONGEST_WORD = WORDS.reduce((a, b) => (a.length >= b.length ? a : b), "");
 
-/** ✅ Map each typewriter service to your real route */
 const SERVICE_ROUTES = {
   "Study Abroad": "/services/study-abroad/university",
   "Visa Support": "/services/Visa",
@@ -36,10 +34,12 @@ function useTypewriter(words, options = {}) {
   } = options;
 
   const [wordIndex, setWordIndex] = React.useState(0);
-  const [text, setText] = React.useState("");
-  const [mode, setMode] = React.useState("typing");
+  const [text, setText] = React.useState(words[0] || "");
+  const [mode, setMode] = React.useState("pausing");
 
   React.useEffect(() => {
+    if (!words.length) return;
+
     const currentWord = words[wordIndex];
 
     if (mode === "typing") {
@@ -67,7 +67,9 @@ function useTypewriter(words, options = {}) {
       }
 
       const t = setTimeout(() => {
-        setWordIndex((i) => (i + 1) % words.length);
+        const nextIndex = (wordIndex + 1) % words.length;
+        setWordIndex(nextIndex);
+        setText("");
         setMode("typing");
       }, pauseBeforeNext);
 
@@ -84,13 +86,11 @@ function useTypewriter(words, options = {}) {
     pauseBeforeNext,
   ]);
 
-  // ✅ return wordIndex so buttons know the selected service
   return { text, wordIndex, currentWord: words[wordIndex] };
 }
 
 export default function Welcome() {
   const navigate = useNavigate();
-  const [show, setShow] = React.useState(false);
 
   const { text, currentWord } = useTypewriter(WORDS, {
     typeSpeed: 70,
@@ -99,11 +99,6 @@ export default function Welcome() {
     pauseBeforeNext: 250,
   });
 
-  React.useEffect(() => {
-    const t = setTimeout(() => setShow(true), 80);
-    return () => clearTimeout(t);
-  }, []);
-
   const goToCurrentService = () => {
     const path = SERVICE_ROUTES[currentWord] || "/services";
     navigate(path, { state: { from: "welcome", selectedService: currentWord } });
@@ -111,7 +106,6 @@ export default function Welcome() {
 
   const bookConsultation = () => {
     navigate("/how-it-works/appointments");
-    // or: navigate("/contact");
   };
 
   return (
@@ -130,19 +124,20 @@ export default function Welcome() {
       {/* CONTENT */}
       <div className="relative mx-auto max-w-7xl px-4 py-10">
         <div className="relative grid items-stretch gap-6 lg:grid-cols-2">
-          {/* IMAGE (mobile: top, desktop: right) */}
+          {/* IMAGE */}
           <div
             className={[
               "relative overflow-hidden rounded-3xl shadow-lg ring-1 ring-black/10",
               "min-h-[320px] sm:min-h-[380px] lg:min-h-[560px]",
               "order-1 lg:order-2",
-              "transform transition duration-700 ease-out",
-              show ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0",
             ].join(" ")}
           >
             <img
               src="/well.png"
               alt="Global education"
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
               className="absolute inset-0 h-full w-full object-cover transition duration-700 ease-out hover:scale-105"
             />
             <div className="absolute inset-0 bg-black/40" />
@@ -155,19 +150,11 @@ export default function Welcome() {
               "relative z-10",
               "order-2 lg:order-1",
               "lg:-mr-24 xl:-mr-32",
-              "transform transition duration-700 ease-out",
-              show ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0",
             ].join(" ")}
           >
             <div className="rounded-3xl bg-white/75 backdrop-blur-lg p-7 sm:p-10 shadow-xl ring-1 ring-black/5">
               {/* TITLE */}
-              <h1
-                className={[
-                  "mt-5 text-3xl sm:text-5xl font-extrabold tracking-tight text-gray-900 leading-[1.05]",
-                  "transform transition duration-700",
-                  show ? "translate-x-0 opacity-100" : "-translate-x-3 opacity-0",
-                ].join(" ")}
-              >
+              <h1 className="mt-5 text-3xl sm:text-5xl font-extrabold tracking-tight text-gray-900 leading-[1.05]">
                 Build a Global Mindset{" "}
                 <span className="hidden sm:inline">
                   <br />
@@ -185,50 +172,15 @@ export default function Welcome() {
               </h1>
 
               {/* SUBTITLE */}
-              <p
-                className={[
-                  "mt-5 sm:mt-6 max-w-xl text-base leading-relaxed text-gray-700",
-                  "transform transition duration-700 delay-100",
-                  show ? "translate-x-0 opacity-100" : "-translate-x-3 opacity-0",
-                ].join(" ")}
-              >
+              <p className="mt-5 sm:mt-6 max-w-xl text-base leading-relaxed text-gray-700">
                 We help students and professionals connect with the right universities,
                 and global opportunities. We provide Study Abroad guidance, Visa Support, and Culture Exchange
                 support, plus Air Ticketing to help you travel smoothly. We also offer English Proficiency preparation,
                 Technical Coaching, Internship Support, and Career Guidance, step by step.
               </p>
 
-              {/* QUICK STEPS */}
-              <div
-                className={[
-                  "mt-6 grid gap-3 sm:grid-cols-3",
-                  "transform transition duration-700 delay-150",
-                  show ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0",
-                ].join(" ")}
-              >
-                <div className="rounded-2xl bg-white/80 p-4 ring-1 ring-black/5">
-                  <div className="text-xs font-bold text-gray-900">1) Register</div>
-                  <div className="mt-1 text-xs text-gray-600">Create profile & goals</div>
-                </div>
-                <div className="rounded-2xl bg-white/80 p-4 ring-1 ring-black/5">
-                  <div className="text-xs font-bold text-gray-900">2) Choose Service</div>
-                  <div className="mt-1 text-xs text-gray-600">See price & requirements</div>
-                </div>
-                <div className="rounded-2xl bg-white/80 p-4 ring-1 ring-black/5">
-                  <div className="text-xs font-bold text-gray-900">3) Get Results</div>
-                  <div className="mt-1 text-xs text-gray-600">Pay, meet, track progress</div>
-                </div>
-              </div>
-
               {/* Buttons */}
-              <div
-                className={[
-                  "mt-7 sm:mt-8 flex flex-wrap gap-4",
-                  "transform transition duration-700 delay-200",
-                  show ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0",
-                ].join(" ")}
-              >
-                {/* ✅ Goes to the currently typed service */}
+              <div className="mt-7 sm:mt-8 flex flex-wrap gap-4">
                 <button
                   onClick={goToCurrentService}
                   className="rounded-xl bg-gray-900 px-6 py-3 text-sm font-semibold text-white shadow transition active:scale-[0.98] hover:bg-gray-800 hover:-translate-y-0.5"
@@ -237,7 +189,6 @@ export default function Welcome() {
                   GET STARTED
                 </button>
 
-                {/* ✅ Goes to consultation page */}
                 <button
                   onClick={bookConsultation}
                   className="rounded-xl border border-gray-300 bg-white/70 px-6 py-3 text-sm font-semibold text-gray-900 shadow-sm transition active:scale-[0.98] hover:bg-white hover:-translate-y-0.5"
@@ -247,13 +198,7 @@ export default function Welcome() {
               </div>
 
               {/* TRUST STRIP */}
-              <div
-                className={[
-                  "mt-9 sm:mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 text-gray-600",
-                  "transform transition duration-700 delay-300",
-                  show ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0",
-                ].join(" ")}
-              >
+              <div className="mt-9 sm:mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 text-gray-600">
                 <span className="text-xs font-semibold uppercase tracking-widest opacity-80">
                   Support for:
                 </span>

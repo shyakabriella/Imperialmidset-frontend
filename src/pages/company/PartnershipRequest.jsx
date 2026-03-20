@@ -4,6 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 const BRAND = {
   primary: "#2F0D34",
   accent: "#BD9F75",
+  blue: "#2563EB",
+  banner: "#F6B100",
 };
 
 function Kicker({ children }) {
@@ -60,72 +62,124 @@ export default function PartnershipRequest() {
   const err = (k) =>
     errors[k] ? <div className="mt-2 text-xs font-semibold text-red-600">{errors[k]}</div> : null;
 
+  const scrollToForm = () => {
+    document.getElementById("request-form")?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
-    <div className="bg-white relative overflow-x-hidden">
-      <div
-        className="absolute left-0 right-0 top-0 -z-10 h-[420px]"
-        style={{
-          background:
-            "linear-gradient(180deg, rgba(47,13,52,0.07) 0%, rgba(189,159,117,0.10) 48%, transparent 100%)",
-        }}
-      />
+    <div className="bg-white overflow-x-hidden">
+      {/* ✅ HERO like Team/Partners */}
+      <section className="relative overflow-hidden">
+        {/* base */}
+        <div className="absolute inset-0 -z-20" style={{ backgroundColor: "#F7F1E6" }} />
 
-      {/* Breadcrumbs */}
-      <div className="mx-auto max-w-7xl px-4 pt-10">
-        <div className="text-xs text-gray-500">
-          <Link to="/" className="hover:underline">
-            Home
-          </Link>{" "}
-          <span className="mx-1">/</span>
-          <span className="text-gray-700">Company</span> <span className="mx-1">/</span>
-          <Link to="/company/partners" className="hover:underline text-gray-700">
-            Partners
-          </Link>{" "}
-          <span className="mx-1">/</span>
-          <span className="text-gray-900 font-semibold">Partnership Request</span>
-        </div>
-      </div>
+        {/* texture - MUST NOT block clicks */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-10 opacity-[0.35]"
+          style={{
+            backgroundImage:
+              "radial-gradient(rgba(15,23,42,0.06) 1px, transparent 1px), radial-gradient(rgba(15,23,42,0.04) 1px, transparent 1px)",
+            backgroundSize: "34px 34px",
+            backgroundPosition: "0 0, 17px 17px",
+          }}
+        />
 
-      {/* Header */}
-      <section className="mx-auto max-w-7xl px-4 py-10 sm:py-14">
-        <div className="rounded-3xl border border-gray-200 bg-white shadow-sm p-8">
-          <Kicker>PARTNERSHIP REQUEST</Kicker>
-          <h1 className="mt-3 text-3xl sm:text-4xl font-extrabold text-gray-900">
-            Become a Partner 
+        <div className="relative z-10 mx-auto max-w-7xl px-4 py-16 sm:py-20 text-center">
+          <h1 className="text-4xl sm:text-6xl font-extrabold text-gray-900">
+            Partnership Request
           </h1>
-          <p className="mt-3 text-gray-600 max-w-3xl leading-relaxed">
-            Share your organization details and partnership type. Our team will contact you for next steps.
-          </p>
 
-          <div className="mt-6 flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={() => navigate(-1)}
-              className="rounded-xl border bg-white px-5 py-2.5 text-sm font-semibold shadow-sm hover:bg-gray-50 transition"
-              style={{ borderColor: "rgba(47,13,52,0.22)", color: BRAND.primary }}
-            >
-              ← Back
-            </button>
+          <div className="mt-4 text-sm sm:text-base text-gray-700">
+            <Link to="/" className="text-yellow-700 hover:underline">
+              Home
+            </Link>{" "}
+            <span className="mx-2 text-gray-400">/</span>
+            <span className="text-yellow-700">Company</span>{" "}
+            <span className="mx-2 text-gray-400">/</span>
+            <Link to="/company/partners" className="text-yellow-700 hover:underline">
+              Partners
+            </Link>{" "}
+            <span className="mx-2 text-gray-400">/</span>
+            <span className="text-gray-900 font-semibold">Request</span>
+          </div>
+        </div>
 
-            <Link
-              to="/company/partners"
-              className="rounded-xl px-5 py-2.5 text-sm font-semibold text-white shadow transition active:scale-[0.98]"
-              style={{ backgroundColor: BRAND.primary }}
-            >
-              View Partners
-            </Link>
+        {/* ✅ Banner strip (clickable buttons fixed) */}
+        <div className="relative z-10 mx-auto max-w-7xl px-4 pb-10 -mt-8">
+          <div className="relative overflow-hidden rounded-3xl shadow-md ring-1 ring-black/10">
+            <div className="absolute inset-0" style={{ backgroundColor: BRAND.banner }} />
+
+            {/* overlay must NOT block clicks */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 opacity-[0.12]"
+              style={{
+                backgroundImage:
+                  "linear-gradient(90deg, rgba(0,0,0,0.08), transparent 55%)",
+              }}
+            />
+
+            <div className="relative z-10 flex items-stretch">
+              {/* icon */}
+              {/* <div className="hidden sm:flex items-center justify-center w-24">
+                <div className="h-14 w-14 rounded-2xl bg-black/10 flex items-center justify-center">
+                  <span className="text-2xl">📝</span>
+                </div>
+              </div> */}
+
+              {/* text + buttons */}
+              <div className="flex-1 px-6 py-8 sm:py-10">
+                <div className="text-2xl sm:text-3xl font-extrabold text-gray-900 leading-snug">
+                  Let’s build a partnership that helps students succeed globally.
+                </div>
+
+                <div className="mt-4 flex flex-wrap gap-3">
+                  <button
+                    type="button"
+                    onClick={scrollToForm}
+                    className="rounded-xl px-5 py-2.5 text-sm font-semibold text-white shadow transition active:scale-[0.98]"
+                    style={{ backgroundColor: BRAND.blue }}
+                  >
+                    Fill Request Form
+                  </button>
+
+                  <Link
+                    to="/company/partners"
+                    className="rounded-xl px-5 py-2.5 text-sm font-semibold shadow-sm border bg-white/20 hover:bg-white/25 transition active:scale-[0.98]"
+                    style={{ borderColor: "rgba(0,0,0,0.18)", color: "#0B1220" }}
+                  >
+                    Back to Partners
+                  </Link>
+                </div>
+              </div>
+
+              {/* ✅ blue scroll bar */}
+              <button
+                type="button"
+                onClick={scrollToForm}
+                className="w-14 sm:w-20 flex items-center justify-center"
+                style={{ backgroundColor: BRAND.blue }}
+                aria-label="Scroll down to form"
+              >
+                <div className="rotate-90 text-white font-bold tracking-widest text-xs sm:text-sm">
+                  Scroll Down
+                </div>
+              </button>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Form */}
-      <section className="mx-auto max-w-7xl px-4 pb-16">
+      {/* ✅ FORM SECTION */}
+      <section id="request-form" className="mx-auto max-w-7xl px-4 pb-16">
         <div className="grid gap-10 lg:grid-cols-12 lg:items-start">
           {/* Left info */}
           <div className="lg:col-span-5">
             <div className="rounded-3xl border border-gray-200 bg-gray-50 p-6">
-              <div className="text-sm font-extrabold text-gray-900">Common partnership types</div>
-              <ul className="mt-3 space-y-2 text-sm text-gray-700">
+              <Kicker>COMMON PARTNERSHIP TYPES</Kicker>
+
+              <ul className="mt-4 space-y-2 text-sm text-gray-700">
                 {[
                   "University admissions collaboration",
                   "Scholarships / academic loan support",
@@ -145,15 +199,32 @@ export default function PartnershipRequest() {
                   Please provide accurate contact details. We usually respond within a short time.
                 </div>
               </div>
+
+              <div className="mt-6 flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={() => navigate(-1)}
+                  className="rounded-xl border bg-white px-5 py-2.5 text-sm font-semibold shadow-sm hover:bg-gray-50 transition"
+                  style={{ borderColor: "rgba(47,13,52,0.22)", color: BRAND.primary }}
+                >
+                  ← Back
+                </button>
+
+                <Link
+                  to="/contact"
+                  className="rounded-xl px-5 py-2.5 text-sm font-semibold text-white shadow transition active:scale-[0.98]"
+                  style={{ backgroundColor: BRAND.primary }}
+                >
+                  Contact Us
+                </Link>
+              </div>
             </div>
           </div>
 
           {/* Right form */}
           <div className="lg:col-span-7">
             <form onSubmit={submit} className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-              <div className="text-xs font-bold tracking-widest" style={{ color: BRAND.primary }}>
-                YOUR DETAILS
-              </div>
+              <Kicker>YOUR DETAILS</Kicker>
 
               <div className="mt-6 grid gap-4 sm:grid-cols-2">
                 <div className="sm:col-span-2">
@@ -242,7 +313,8 @@ export default function PartnershipRequest() {
                   <label className="flex items-start gap-3 text-sm text-gray-700">
                     <input type="checkbox" name="agree" checked={form.agree} onChange={onChange} className="mt-1" />
                     <span>
-                      I agree that you may contact me about this partnership. <span className="text-red-600">*</span>
+                      I agree that you may contact me about this partnership.{" "}
+                      <span className="text-red-600">*</span>
                     </span>
                   </label>
                   {err("agree")}
@@ -258,11 +330,11 @@ export default function PartnershipRequest() {
                   </button>
 
                   <Link
-                    to="/contact"
+                    to="/company/partners"
                     className="rounded-xl border bg-white px-6 py-3 text-sm font-semibold shadow-sm hover:bg-gray-50 transition"
                     style={{ borderColor: "rgba(47,13,52,0.22)", color: BRAND.primary }}
                   >
-                    Contact Us Instead
+                    View Partners
                   </Link>
                 </div>
 

@@ -249,7 +249,7 @@ export default function EnglishProficiency() {
             </p>
 
             {/* mini “how it works” */}
-            <div className="mt-6 grid gap-3 sm:grid-cols-3">
+            {/* <div className="mt-6 grid gap-3 sm:grid-cols-3">
               {[
                 { t: "1) Register", d: "Your test + date + plan" },
                 { t: "2) Practice", d: "Mock tests + feedback" },
@@ -260,7 +260,7 @@ export default function EnglishProficiency() {
                   <div className="mt-1 text-xs text-gray-600">{s.d}</div>
                 </div>
               ))}
-            </div>
+            </div> */}
 
             <div className="mt-6 flex flex-wrap gap-3">
               <button

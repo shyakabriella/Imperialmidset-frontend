@@ -31,16 +31,43 @@ const BRAND = {
   accent: "#BD9F75",
 };
 
+/** Hero banner colors */
+const HERO = {
+  paper: "#F7F1E6",
+  banner: "#F6B100",
+  blue: "#2563EB",
+  ink: "#0B1220",
+};
+
+/** Local fallback image */
+const FALLBACK_IMG =
+  "data:image/svg+xml;charset=UTF-8," +
+  encodeURIComponent(`
+  <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900">
+    <defs>
+      <linearGradient id="g" x1="0" x2="1">
+        <stop offset="0" stop-color="#2F0D34"/>
+        <stop offset="1" stop-color="#BD9F75"/>
+      </linearGradient>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#g)"/>
+    <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
+      font-family="Arial" font-size="34" fill="white" opacity="0.95">
+      Image
+    </text>
+  </svg>
+`);
+
 /** ✅ Local images (put them in: public/culture/) */
 const IMAGES = {
-  heroMain: "/culture/hero-main.jpg",
-  hero1: "/culture/hero-3.jpg",
-  hero2: "/culture/hero-2.jpg",
-  hero3: "/culture/hero-1.jpg",
-  strip: ["/culture/strip-1.jpg", "/culture/strip-2.jpg", "/culture/strip-3.jpg", "/culture/strip-4.jpg"],
   section: "/culture/section1.jpg",
   programs: ["/culture/hostfamily.jpg", "/culture/program-2.jpg", "/culture/section.jpg"],
-  support: ["/culture/program-1.jpg", "/culture/etiqueting-1.jpg", "/culture/etiqueting-2.jpg", "/culture/etiqueting-3.jpg"],
+  support: [
+    "/culture/program-1.jpg",
+    "/culture/etiqueting-1.jpg",
+    "/culture/etiqueting-2.jpg",
+    "/culture/etiqueting-3.jpg",
+  ],
 };
 
 const PROGRAMS = [
@@ -77,24 +104,6 @@ const SUPPORT = [
   },
 ];
 
-const DESTINATIONS = [
-  { name: "Canada", note: "Friendly, diverse, strong communities" },
-  { name: "USA", note: "Fast-paced culture, many opportunities" },
-  { name: "UK", note: "Formal etiquette, global environment" },
-  { name: "Germany", note: "Structured systems, punctuality matters" },
-  { name: "Australia", note: "Relaxed culture, open communication" },
-  { name: "Poland", note: "Affordable, growing international student life" },
-];
-
-const CHECKLIST = [
-  "Know basic local etiquette (greetings, time, dress)",
-  "Understand culture shock stages and how to manage them",
-  "Learn communication style (direct vs indirect)",
-  "Prepare safe housing plan and emergency contacts",
-  "Budget plan and lifestyle expectations",
-  "Build confidence: networking, community, and self-care",
-];
-
 const FAQS = [
   {
     q: "What is culture exchange support?",
@@ -122,26 +131,6 @@ function Kicker({ children }) {
   );
 }
 
-function SoftPill({ children }) {
-  return (
-    <span
-      className="inline-flex items-center rounded-full px-3 py-1 text-[11px] font-bold"
-      style={{ backgroundColor: "rgba(47,13,52,0.08)", color: BRAND.primary }}
-    >
-      {children}
-    </span>
-  );
-}
-
-function Stat({ label, value }) {
-  return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
-      <div className="text-xs font-bold tracking-widest text-gray-500">{label}</div>
-      <div className="mt-2 text-xl font-extrabold text-gray-900">{value}</div>
-    </div>
-  );
-}
-
 function ImageCard({ title, desc, img }) {
   return (
     <div className="rounded-3xl border border-gray-200 bg-white shadow-sm hover:shadow-md transition overflow-hidden">
@@ -149,6 +138,7 @@ function ImageCard({ title, desc, img }) {
         <img
           src={img}
           alt={title}
+          onError={(e) => (e.currentTarget.src = FALLBACK_IMG)}
           className="h-full w-full object-cover hover:scale-[1.04] transition duration-500"
         />
       </div>
@@ -161,29 +151,23 @@ function ImageCard({ title, desc, img }) {
 }
 
 function normalizeEvent(ev) {
-  const dateStart = ev.dateStart || ev.date || "";
-  const dateEnd = ev.dateEnd || ev.endDate || ev.date || "";
-  const cover =
-    ev.cover || ev.image || "/culture/event-default.jpg"; // optional local fallback
+  const cover = ev.cover || ev.image || "/culture/event-default.jpg";
 
   return {
     id: ev.id,
     title: ev.title,
     audience: ev.audience || "Students",
-    location: ev.location || "Kigali, Rwanda",
-    dateStart,
-    dateEnd,
     cover,
     summary: ev.summary || ev.overview || ev.desc || "Culture exchange experience and guided learning.",
     fee: ev.fee || "Free",
-    seats: ev.seats ?? "Limited",
   };
 }
 
 export default function CultureExchange() {
   const navigate = useNavigate();
-  const { ref, inView } = useInView();
+  const hero = useInView({ threshold: 0.18 });
   const formRef = React.useRef(null);
+
   const [faqOpen, setFaqOpen] = React.useState(0);
 
   // Preview first 3 events (if any)
@@ -217,151 +201,125 @@ export default function CultureExchange() {
     navigate(`/services/Culture_exchange/events/${event.id}/apply`, { state: { event } });
   };
 
+  const scrollToForm = () => {
+    formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return (
-    <div className="bg-white relative">
-      {/* soft top background */}
-      <div
-        className="absolute left-0 right-0 top-0 -z-10 h-[560px]"
-        style={{
-          background:
-            "linear-gradient(180deg, rgba(189,159,117,0.12) 0%, rgba(47,13,52,0.06) 42%, transparent 100%)",
-        }}
-      />
+    <div className="bg-white overflow-x-hidden">
+      {/* ✅ HERO + EDGE-TO-EDGE BANNER */}
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 -z-20" style={{ backgroundColor: HERO.paper }} />
 
-      {/* Breadcrumbs */}
-      <div className="mx-auto max-w-7xl px-4 pt-10">
-        <div className="text-xs text-gray-500">
-          <Link to="/" className="hover:underline">
-            Home
-          </Link>{" "}
-          <span className="mx-1">/</span>
-          <span className="text-gray-700">Services</span> <span className="mx-1">/</span>
-          <span className="text-gray-900 font-semibold">Culture Exchange</span>
-        </div>
-      </div>
+        {/* texture (must NOT block clicks) */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-10 opacity-[0.35]"
+          style={{
+            backgroundImage:
+              "radial-gradient(rgba(15,23,42,0.06) 1px, transparent 1px), radial-gradient(rgba(15,23,42,0.04) 1px, transparent 1px)",
+            backgroundSize: "34px 34px",
+            backgroundPosition: "0 0, 17px 17px",
+          }}
+        />
 
-      {/* HERO */}
-      <section ref={ref} className="mx-auto max-w-7xl px-4 py-10 sm:py-14">
-        <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
-          {/* Left */}
-          <div
-            className={[
-              "lg:col-span-6 transition-all duration-700 ease-out",
-              inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6",
-            ].join(" ")}
-          >
-            <div className="flex flex-wrap gap-2">
-              <SoftPill>Culture Exchange</SoftPill>
-              <SoftPill>Preparation • Adaptation • Confidence</SoftPill>
-              <SoftPill>Online Guidance</SoftPill>
-            </div>
+        <div ref={hero.ref} className="relative z-10 mx-auto max-w-7xl px-4 pt-[120px] pb-10 text-center">
+          <h1 className="text-4xl sm:text-6xl font-extrabold text-gray-900">Culture Exchange</h1>
 
-            <h1 className="mt-4 text-3xl sm:text-5xl font-extrabold text-gray-900 leading-tight">
-              Adapt faster abroad and feel confident in a new culture
-            </h1>
-
-            <p className="mt-4 text-gray-600 leading-relaxed">
-              We help you understand cultural expectations, communicate clearly, avoid common mistakes,
-              and integrate smoothly in your new environment.
-            </p>
-
-            <div className="mt-6 flex flex-wrap gap-3">
-              <button
-                type="button"
-                onClick={() => formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
-                className="rounded-xl px-6 py-3 text-sm font-semibold text-white shadow transition active:scale-[0.98]"
-                style={{ backgroundColor: BRAND.primary }}
-              >
-                Request Guidance
-              </button>
-
-              <button
-                type="button"
-                onClick={goEvents}
-                className="rounded-xl border bg-white px-6 py-3 text-sm font-semibold shadow-sm transition active:scale-[0.98]"
-                style={{ borderColor: BRAND.accent, color: BRAND.primary }}
-              >
-                Browse Events
-              </button>
-            </div>
-
-            <div className="mt-8 grid gap-4 sm:grid-cols-3">
-              <Stat label="Support" value="Step-by-step" />
-              <Stat label="Style" value="Coaching" />
-              <Stat label="Mode" value="Online" />
-            </div>
+          <div className="mt-4 text-sm sm:text-base text-gray-700">
+            <Link to="/" className="text-yellow-700 hover:underline">
+              Home
+            </Link>{" "}
+            <span className="mx-2 text-gray-400">/</span>
+            <span className="text-gray-700">Services</span>
+            <span className="mx-2 text-gray-400">/</span>
+            <span className="text-gray-900 font-semibold">Culture Exchange</span>
           </div>
 
-          {/* Right collage */}
-          <div
-            className={[
-              "lg:col-span-6 transition-all duration-700 ease-out",
-              inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6",
-            ].join(" ")}
-            style={{ transitionDelay: "120ms" }}
-          >
-            <div className="grid gap-4 sm:grid-cols-12">
-              <div className="sm:col-span-7 overflow-hidden rounded-3xl shadow-lg ring-1 ring-black/10">
-                <img src={IMAGES.heroMain} alt="Culture exchange" className="h-[320px] w-full object-cover" />
-              </div>
+          <p className="mx-auto mt-5 max-w-3xl text-base sm:text-lg text-gray-700 leading-relaxed">
+            We help you adapt faster abroad: cultural expectations, communication, etiquette, confidence, safety,
+            and community integration.
+          </p>
+        </div>
 
-              <div className="sm:col-span-5 grid gap-4">
-                <div className="overflow-hidden rounded-3xl shadow-lg ring-1 ring-black/10">
-                  <img src={IMAGES.hero1} alt="Students" className="h-[152px] w-full object-cover" />
-                </div>
-                <div className="overflow-hidden rounded-3xl shadow-lg ring-1 ring-black/10">
-                  <img src={IMAGES.hero2} alt="Teamwork" className="h-[152px] w-full object-cover" />
+        {/* ✅ FULL WIDTH BANNER */}
+        <div className="relative z-10 w-screen left-1/2 -translate-x-1/2 overflow-hidden">
+          <div className="absolute inset-0" style={{ backgroundColor: HERO.banner }} />
+
+          {/* overlay must NOT block clicks */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 opacity-[0.12]"
+            style={{ backgroundImage: "linear-gradient(90deg, rgba(0,0,0,0.08), transparent 55%)" }}
+          />
+
+          <div className="relative mx-auto max-w-7xl px-4">
+            <div className="py-8 pr-[72px] sm:pr-[96px]">
+              <div className="flex items-center gap-3 justify-center sm:justify-start">
+                <div className="text-left">
+                  <div className="text-2xl sm:text-3xl font-extrabold text-gray-900 leading-snug">
+                    Ready to prepare for your destination?
+                  </div>
+                  <div className="mt-1 text-sm sm:text-base text-gray-800">
+                    Request guidance or browse culture exchange events.
+                  </div>
                 </div>
               </div>
 
-              <div className="sm:col-span-12 overflow-hidden rounded-3xl shadow-lg ring-1 ring-black/10">
-                <img src={IMAGES.hero3} alt="Learning" className="h-[170px] w-full object-cover" />
-              </div>
-            </div>
+              {/* ✅ CLEAN: ONLY 2 buttons here */}
+              <div className="mt-4 flex flex-wrap gap-3 justify-center sm:justify-start">
+                <button
+                  type="button"
+                  onClick={scrollToForm}
+                  className="rounded-xl px-5 py-2.5 text-sm font-semibold text-white shadow transition active:scale-[0.98]"
+                  style={{ backgroundColor: HERO.blue }}
+                >
+                  Request Guidance
+                </button>
 
-            <div className="mt-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
-              <div className="text-sm font-extrabold text-gray-900">What you gain</div>
-              <div className="mt-1 text-sm text-gray-600">
-                Confidence • Communication • Social integration • Professional etiquette
+                <button
+                  type="button"
+                  onClick={goEvents}
+                  className="rounded-xl px-5 py-2.5 text-sm font-semibold shadow-sm border bg-white/20 hover:bg-white/25 transition active:scale-[0.98]"
+                  style={{ borderColor: "rgba(0,0,0,0.18)", color: HERO.ink }}
+                >
+                  Browse Events →
+                </button>
               </div>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* ✅ EVENTS PREVIEW (links to events + apply) */}
-      <section className="mx-auto max-w-7xl px-4 pb-14">
-        <div className="flex items-end justify-between gap-4 flex-wrap">
-          <div>
-            <Kicker>UPCOMING EVENTS</Kicker>
-            <h2 className="mt-2 text-3xl font-extrabold text-gray-900">Apply to a culture event</h2>
-            <p className="mt-2 text-gray-600">
-              You can browse all events, or apply directly from here.
-            </p>
-          </div>
-
+          {/* blue scroll bar */}
           <button
             type="button"
-            onClick={goEvents}
-            className="rounded-xl px-5 py-2.5 text-sm font-semibold text-white shadow active:scale-[0.98]"
-            style={{ backgroundColor: BRAND.primary }}
+            onClick={scrollToForm}
+            className="absolute right-0 top-0 h-full w-14 sm:w-20 flex items-center justify-center"
+            style={{ backgroundColor: HERO.blue }}
+            aria-label="Scroll down to request form"
           >
-            View all events
+            <div className="rotate-90 text-white font-bold tracking-widest text-xs sm:text-sm">
+              Scroll Down
+            </div>
           </button>
+        </div>
+
+        <div className="h-10" />
+      </section>
+
+      {/* ✅ EVENTS PREVIEW */}
+      <section className="mx-auto max-w-7xl px-4 pb-14">
+        <div className="text-center">
+          <Kicker>UPCOMING EVENTS</Kicker>
+          <h2 className="mt-2 text-3xl font-extrabold text-gray-900">Apply to a culture event</h2>
+          <p className="mt-2 text-gray-600">
+            If you don’t see events yet, check again soon — we keep updating them.
+          </p>
         </div>
 
         {eventsPreview.length === 0 ? (
           <div className="mt-8 rounded-3xl border border-gray-200 bg-white p-8 text-center shadow-sm">
             <div className="text-lg font-extrabold text-gray-900">No events yet</div>
             <p className="mt-2 text-sm text-gray-600">We will publish upcoming events here soon.</p>
-            <button
-              type="button"
-              onClick={goEvents}
-              className="inline-flex mt-5 rounded-xl px-6 py-3 text-sm font-semibold text-white shadow transition"
-              style={{ backgroundColor: BRAND.primary }}
-            >
-              Go to Events page
-            </button>
           </div>
         ) : (
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -371,7 +329,12 @@ export default function CultureExchange() {
                 className="rounded-3xl border border-gray-200 bg-white shadow-sm overflow-hidden hover:shadow-md transition"
               >
                 <div className="relative h-44">
-                  <img src={e.cover} alt={e.title} className="absolute inset-0 h-full w-full object-cover" />
+                  <img
+                    src={e.cover}
+                    alt={e.title}
+                    onError={(ev) => (ev.currentTarget.src = FALLBACK_IMG)}
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
                   <div className="absolute inset-0 bg-black/10" />
                   <div className="absolute left-4 top-4 flex flex-wrap gap-2">
                     <span className="rounded-full bg-white/90 px-3 py-1 text-[11px] font-bold text-gray-900">
@@ -390,22 +353,15 @@ export default function CultureExchange() {
                   <div className="text-lg font-extrabold text-gray-900">{e.title}</div>
                   <div className="mt-2 text-sm text-gray-600 leading-relaxed">{e.summary}</div>
 
-                  <div className="mt-5 flex gap-3">
+                  {/* ✅ CLEAN: ONLY Apply button */}
+                  <div className="mt-5">
                     <button
                       type="button"
                       onClick={() => goApply(e)}
-                      className="flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold text-white shadow transition active:scale-[0.98]"
+                      className="w-full rounded-xl px-4 py-2.5 text-sm font-semibold text-white shadow transition active:scale-[0.98]"
                       style={{ backgroundColor: BRAND.primary }}
                     >
                       Apply
-                    </button>
-                    <button
-                      type="button"
-                      onClick={goEvents}
-                      className="rounded-xl px-4 py-2.5 text-sm font-semibold border shadow-sm bg-white hover:bg-gray-50 transition"
-                      style={{ borderColor: "rgba(47,13,52,0.25)", color: BRAND.primary }}
-                    >
-                      More events
                     </button>
                   </div>
                 </div>
@@ -415,29 +371,7 @@ export default function CultureExchange() {
         )}
       </section>
 
-      {/* PHOTO STRIP */}
-      <section className="mx-auto max-w-7xl px-4 pb-14">
-        <div className="rounded-3xl border border-gray-200 bg-white p-4 shadow-sm">
-          <div className="flex items-center justify-between gap-3 flex-wrap">
-            <Kicker>REAL LIFE EXPERIENCE</Kicker>
-            <span className="text-xs font-bold text-gray-500">Culture • Community • Learning</span>
-          </div>
-
-          <div className="mt-4 grid gap-3 sm:grid-cols-4">
-            {IMAGES.strip.map((src, i) => (
-              <div key={src} className="overflow-hidden rounded-2xl ring-1 ring-black/10">
-                <img
-                  src={src}
-                  alt={`Culture moment ${i + 1}`}
-                  className="h-40 w-full object-cover hover:scale-[1.03] transition duration-300"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* PROGRAMS */}
+      {/* ✅ PROGRAMS */}
       <section className="mx-auto max-w-7xl px-4 pb-14">
         <div className="text-center">
           <Kicker>PROGRAMS</Kicker>
@@ -447,18 +381,28 @@ export default function CultureExchange() {
 
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {PROGRAMS.map((p, idx) => (
-            <ImageCard key={p.title} title={p.title} desc={p.desc} img={IMAGES.programs[idx] || IMAGES.heroMain} />
+            <ImageCard
+              key={p.title}
+              title={p.title}
+              desc={p.desc}
+              img={IMAGES.programs[idx] || IMAGES.section}
+            />
           ))}
         </div>
       </section>
 
-      {/* SUPPORT */}
+      {/* ✅ SUPPORT */}
       <section className="py-14" style={{ backgroundColor: "rgba(47,13,52,0.03)" }}>
         <div className="mx-auto max-w-7xl px-4">
           <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
             <div className="lg:col-span-5">
               <div className="overflow-hidden rounded-3xl shadow-lg ring-1 ring-black/10">
-                <img src={IMAGES.section} alt="Culture guidance" className="h-[420px] w-full object-cover" />
+                <img
+                  src={IMAGES.section}
+                  alt="Culture guidance"
+                  onError={(e) => (e.currentTarget.src = FALLBACK_IMG)}
+                  className="h-[420px] w-full object-cover"
+                />
               </div>
             </div>
 
@@ -473,116 +417,24 @@ export default function CultureExchange() {
 
               <div className="mt-8 grid gap-4 sm:grid-cols-2">
                 {SUPPORT.map((s, idx) => (
-                  <ImageCard key={s.title} title={s.title} desc={s.desc} img={IMAGES.support[idx] || IMAGES.hero1} />
+                  <ImageCard
+                    key={s.title}
+                    title={s.title}
+                    desc={s.desc}
+                    img={IMAGES.support[idx] || IMAGES.section}
+                  />
                 ))}
               </div>
 
-              <div className="mt-8 flex flex-wrap gap-3">
-                <button
-                  type="button"
-                  onClick={() => formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
-                  className="rounded-xl px-6 py-3 text-sm font-semibold text-white shadow transition active:scale-[0.98]"
-                  style={{ backgroundColor: BRAND.primary }}
-                >
-                  Start coaching
-                </button>
-
-                <button
-                  type="button"
-                  onClick={goEvents}
-                  className="rounded-xl border bg-white px-6 py-3 text-sm font-semibold shadow-sm transition active:scale-[0.98]"
-                  style={{ borderColor: BRAND.accent, color: BRAND.primary }}
-                >
-                  Browse Events
-                </button>
-              </div>
+              {/* ✅ REMOVED: extra buttons here (duplicates) */}
             </div>
           </div>
         </div>
       </section>
 
-      {/* MIDDLE */}
-      <section id="middle" className="mx-auto max-w-7xl px-4 py-14">
-        <div className="text-center">
-          <Kicker>GUIDE</Kicker>
-          <h2 className="mt-3 text-3xl font-extrabold text-gray-900">Destinations, checklist and FAQ</h2>
-          <p className="mt-3 text-gray-600">Key guidance placed early to help users decide quickly.</p>
-        </div>
-
-        <div className="mt-10 grid gap-6 lg:grid-cols-2">
-          {/* Destinations */}
-          <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-            <div className="flex items-center justify-between gap-3 flex-wrap">
-              <Kicker>DESTINATIONS</Kicker>
-              <span
-                className="text-xs font-bold px-3 py-1 rounded-full"
-                style={{ backgroundColor: "rgba(47,13,52,0.08)", color: BRAND.primary }}
-              >
-                Popular
-              </span>
-            </div>
-
-            <h3 className="mt-2 text-2xl font-extrabold text-gray-900">Where we guide you</h3>
-            <p className="mt-2 text-sm text-gray-600">
-              We guide you based on your destination culture and daily lifestyle expectations.
-            </p>
-
-            <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              {DESTINATIONS.map((d) => (
-                <div key={d.name} className="rounded-2xl bg-gray-50 p-4">
-                  <div className="text-sm font-extrabold text-gray-900">{d.name}</div>
-                  <div className="mt-1 text-xs text-gray-600">{d.note}</div>
-                </div>
-              ))}
-            </div>
-
-            <button
-              type="button"
-              onClick={goEvents}
-              className="mt-6 w-full rounded-xl px-5 py-2.5 text-sm font-semibold text-white shadow transition active:scale-[0.98]"
-              style={{ backgroundColor: BRAND.primary }}
-            >
-              Browse Events
-            </button>
-          </div>
-
-          {/* Checklist */}
-          <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-            <div className="flex items-center justify-between gap-3 flex-wrap">
-              <Kicker>READINESS CHECKLIST</Kicker>
-              <span
-                className="text-xs font-bold px-3 py-1 rounded-full"
-                style={{ backgroundColor: "rgba(189,159,117,0.18)", color: BRAND.primary }}
-              >
-                Preparation
-              </span>
-            </div>
-
-            <h3 className="mt-2 text-2xl font-extrabold text-gray-900">Be ready before you travel</h3>
-            <p className="mt-2 text-sm text-gray-600">These small things reduce stress and culture shock a lot.</p>
-
-            <ul className="mt-5 space-y-2 text-sm text-gray-700">
-              {CHECKLIST.map((c) => (
-                <li key={c} className="flex gap-3">
-                  <span className="mt-1 h-2 w-2 rounded-full" style={{ backgroundColor: BRAND.accent }} />
-                  {c}
-                </li>
-              ))}
-            </ul>
-
-            <button
-              type="button"
-              onClick={() => formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
-              className="mt-6 w-full rounded-xl px-5 py-2.5 text-sm font-semibold text-white shadow transition active:scale-[0.98]"
-              style={{ backgroundColor: BRAND.primary }}
-            >
-              Get coaching support
-            </button>
-          </div>
-        </div>
-
-        {/* FAQ */}
-        <div className="mt-8 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+      {/* ✅ FAQ */}
+      <section className="mx-auto max-w-7xl px-4 py-14">
+        <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
           <div className="text-center">
             <Kicker>FAQ</Kicker>
             <h3 className="mt-2 text-2xl font-extrabold text-gray-900">Common questions</h3>
@@ -611,7 +463,9 @@ export default function CultureExchange() {
                       open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
                     ].join(" ")}
                   >
-                    <div className="overflow-hidden px-5 pb-4 text-sm text-gray-600 leading-relaxed">{f.a}</div>
+                    <div className="overflow-hidden px-5 pb-4 text-sm text-gray-600 leading-relaxed">
+                      {f.a}
+                    </div>
                   </div>
                 </div>
               );
@@ -620,7 +474,7 @@ export default function CultureExchange() {
         </div>
       </section>
 
-      {/* FORM */}
+      {/* ✅ FORM */}
       <section className="py-14" style={{ backgroundColor: "rgba(47,13,52,0.03)" }}>
         <div className="mx-auto max-w-7xl px-4">
           <div className="grid gap-10 lg:grid-cols-2 lg:items-start">
@@ -630,50 +484,69 @@ export default function CultureExchange() {
               <p className="mt-3 text-gray-600 leading-relaxed">
                 Share your destination and program type. We will contact you with the best guidance.
               </p>
-
-              <div className="mt-6 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-                <div className="text-sm font-extrabold text-gray-900">You will receive</div>
-                <ul className="mt-3 space-y-2 text-sm text-gray-700">
-                  {[
-                    "A simple preparation checklist",
-                    "Culture and etiquette tips for your destination",
-                    "Confidence and communication guidance",
-                    "Community integration tips",
-                  ].map((t) => (
-                    <li key={t} className="flex gap-3">
-                      <span className="mt-1 h-2 w-2 rounded-full" style={{ backgroundColor: BRAND.accent }} />
-                      {t}
-                    </li>
-                  ))}
-                </ul>
-              </div>
             </div>
 
-            <form ref={formRef} onSubmit={submit} className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+            <form
+              ref={formRef}
+              onSubmit={submit}
+              className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm"
+            >
               <div className="grid gap-4">
                 <div>
                   <label className="text-xs font-bold text-gray-700">Full Name</label>
-                  <input name="fullName" value={form.fullName} onChange={onChange} required className={inputBase} placeholder="Your name" />
+                  <input
+                    name="fullName"
+                    value={form.fullName}
+                    onChange={onChange}
+                    required
+                    className={inputBase}
+                    placeholder="Your name"
+                  />
                 </div>
 
                 <div>
                   <label className="text-xs font-bold text-gray-700">Email</label>
-                  <input type="email" name="email" value={form.email} onChange={onChange} required className={inputBase} placeholder="you@email.com" />
+                  <input
+                    type="email"
+                    name="email"
+                    value={form.email}
+                    onChange={onChange}
+                    required
+                    className={inputBase}
+                    placeholder="you@email.com"
+                  />
                 </div>
 
                 <div>
                   <label className="text-xs font-bold text-gray-700">Phone / WhatsApp</label>
-                  <input name="phone" value={form.phone} onChange={onChange} className={inputBase} placeholder="+250..." />
+                  <input
+                    name="phone"
+                    value={form.phone}
+                    onChange={onChange}
+                    className={inputBase}
+                    placeholder="+250..."
+                  />
                 </div>
 
                 <div>
                   <label className="text-xs font-bold text-gray-700">Destination (optional)</label>
-                  <input name="destination" value={form.destination} onChange={onChange} className={inputBase} placeholder="Canada, UK, Germany..." />
+                  <input
+                    name="destination"
+                    value={form.destination}
+                    onChange={onChange}
+                    className={inputBase}
+                    placeholder="Canada, UK, Germany..."
+                  />
                 </div>
 
                 <div>
                   <label className="text-xs font-bold text-gray-700">Program Type (optional)</label>
-                  <select name="programType" value={form.programType} onChange={onChange} className={`${inputBase} bg-white`}>
+                  <select
+                    name="programType"
+                    value={form.programType}
+                    onChange={onChange}
+                    className={`${inputBase} bg-white`}
+                  >
                     <option value="">Select type...</option>
                     <option value="Student Exchange">Student Exchange</option>
                     <option value="Work / Internship">Work / Internship</option>
@@ -684,7 +557,14 @@ export default function CultureExchange() {
 
                 <div>
                   <label className="text-xs font-bold text-gray-700">Message (optional)</label>
-                  <textarea name="message" value={form.message} onChange={onChange} rows={4} className={inputBase} placeholder="Tell us your concerns, timeline, and goals..." />
+                  <textarea
+                    name="message"
+                    value={form.message}
+                    onChange={onChange}
+                    rows={4}
+                    className={inputBase}
+                    placeholder="Tell us your concerns, timeline, and goals..."
+                  />
                 </div>
 
                 <button
