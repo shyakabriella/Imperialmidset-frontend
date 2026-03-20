@@ -1,6 +1,5 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Layout from "../components/Layout";
-import DashboardLayout from "../components/DashboardLayout";
 
 import Home from "../pages/Home";
 import AboutUs from "../pages/AboutUs";
@@ -22,41 +21,29 @@ import EnglishTestsDashboard from "../pages/services/EnglishTestsDashboard";
 import CareerGuidance from "../pages/services/CareerGuidance";
 import CareerBookMeeting from "../pages/services/CareerBookMeeting";
 import TechnicalSupport from "../pages/services/TechnicalSupport";
+import StudyAbroadAssessment from "../pages/services/StudyAbroadAssessment";
+import VisaSupportForm from "../pages/services/VisaSupportForm";
 
 import Appointments from "../pages/how-it-works/Appointments";
 import HowItWorks from "../pages/how-it-works/HowItWorks";
 import Quotation from "../pages/how-it-works/Quotation";
 import PaymentInvoice from "../pages/how-it-works/PaymentInvoice";
 import Tracking from "../pages/how-it-works/Tracking";
-import TechnicalSupport from "../pages/services/TechnicalSupport";
-import StudyAbroadAssessment from "../pages/services/StudyAbroadAssessment";
-import VisaSupportForm from "../pages/services/VisaSupportForm";
+
 import UniversityDetails from "../pages/UniversityDetails";
 
 export default function AppRoutes() {
   return (
     <Routes>
-      {/* Login page without header/footer */}
       <Route path="/login" element={<Login />} />
 
-      {/* Public Website Routes with header/footer */}
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/how-it-works/appointments" element={<Appointments />} />
-        <Route path="/testimonials" element={<Testimonials/>}/>
+        <Route path="/testimonials" element={<Testimonials />} />
         <Route path="/universities/:slug" element={<UniversityDetails />} />
-        <Route path="/companyTeam"element={<CompanyTeam/>}/>
-        <Route path="/company/partners"element={<CompanyPartners/>}/>
-        <Route path="/company/partners/request"element={<PartnershipRequest/>}/>
-        <Route path="/resources/blog" element={<ResourcesBlog />} />
-        <Route path="/resources/scholarships" element={<ScholarshipTips />} />
-        <Route path="/resources/countries" element={<CountryGuides />} />
-        <Route
-          path="/resources/university-finder"
-          element={<UniversityFinder />}
-        />
+        <Route path="/companyTeam" element={<CompanyTeam />} />
         <Route path="/faq" element={<FAQ />} />
 
         <Route path="/how-it-works" element={<HowItWorks />} />
@@ -69,18 +56,36 @@ export default function AppRoutes() {
           path="/services/study-abroad/university"
           element={<StudyAbroadUniversity />}
         />
-        <Route path="services/Visa" element={<VisaSupport />} />
-        <Route path="services/Culture_exchange" element={<CultureExchange />} />
-        <Route path="services/Culture_exchange/events" element={<CultureExchangeEvents />} />
-        <Route path="services/Culture_exchange/events/:eventId/apply" element={<CultureEventApply />} />
-        <Route path="services/Air_ticket" element={<AirTicketing />} />
-        <Route path="services/english-tests" element={<EnglishProficiency />} />
-        <Route path="services/english-tests/dashboard" element={<EnglishTestsDashboard />} />
-        <Route path="services/Career" element={<CareerGuidance />} />
-        <Route path="services/Career/book-meeting" element={<CareerBookMeeting />} />
-        <Route path="services/technical"element={<TechnicalSupport/>}/>
-       <Route path="/services/study-abroad/assessment" element={<StudyAbroadAssessment />} />
-       <Route path="/services/visa-support/request"element={<VisaSupportForm/>}/>
+        <Route path="/services/Visa" element={<VisaSupport />} />
+        <Route path="/services/Culture_exchange" element={<CultureExchange />} />
+        <Route
+          path="/services/Culture_exchange/events"
+          element={<CultureExchangeEvents />}
+        />
+        <Route
+          path="/services/Culture_exchange/events/:eventId/apply"
+          element={<CultureEventApply />}
+        />
+        <Route path="/services/Air_ticket" element={<AirTicketing />} />
+        <Route path="/services/english-tests" element={<EnglishProficiency />} />
+        <Route
+          path="/services/english-tests/dashboard"
+          element={<EnglishTestsDashboard />}
+        />
+        <Route path="/services/Career" element={<CareerGuidance />} />
+        <Route
+          path="/services/Career/book-meeting"
+          element={<CareerBookMeeting />}
+        />
+        <Route path="/services/technical" element={<TechnicalSupport />} />
+        <Route
+          path="/services/study-abroad/assessment"
+          element={<StudyAbroadAssessment />}
+        />
+        <Route
+          path="/services/visa-support/request"
+          element={<VisaSupportForm />}
+        />
       </Route>
     </Routes>
   );
